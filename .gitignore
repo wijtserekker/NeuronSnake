@@ -16,6 +16,6 @@ hs_err_pid*
 *.xml
 .idea/*
 .idea/
-out/*
+out/
 /out/
 *.iml
