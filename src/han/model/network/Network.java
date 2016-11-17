@@ -1,8 +1,8 @@
-package han.model;
+package han.model.network;
 
-import han.model.nodes.HiddenNode;
-import han.model.nodes.InputNode;
-import han.model.nodes.OutputNode;
+import han.model.network.nodes.HiddenNode;
+import han.model.network.nodes.InputNode;
+import han.model.network.nodes.OutputNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,7 @@ public class Network {
     private List<Node> inputNodeGroup = new ArrayList<>();
     private List<List<Node>> hiddenNodeGroupList = new ArrayList<>();
     private List<Node> outputNodeGroup = new ArrayList<>();
+    private List<Edge> edgeList = new ArrayList<>();
 
     /**
      * Constructor for the network when provided with all the variable amount of nodes per node group
@@ -38,7 +39,7 @@ public class Network {
         for (int i = 1; i < hiddenNodeGroupList.size(); i++) {
             createEdges(hiddenNodeGroupList.get(i - 1), hiddenNodeGroupList.get(i));
         }
-        createEdges(hiddenNodeGroupList.get(hiddenNodeGroupList.size()), outputNodeGroup);
+        createEdges(hiddenNodeGroupList.get(hiddenNodeGroupList.size() - 1), outputNodeGroup);
     }
 
     /**
@@ -51,15 +52,15 @@ public class Network {
     private void createNodes(int amountOfInputNodes, int amountOfHiddenNodeGroups, int amountOfHiddenNodes,
                              int amountOfOutputNodes) {
         for (int i = 0; i < amountOfInputNodes; i++) {
-            inputNodeGroup.add(new InputNode());
+            inputNodeGroup.add(new InputNode(0, i));
         }
         for (int i = 0; i < amountOfOutputNodes; i++) {
-            outputNodeGroup.add(new OutputNode());
+            outputNodeGroup.add(new OutputNode(amountOfHiddenNodeGroups + 1, i));
         }
         for (int i = 0; i < amountOfHiddenNodeGroups; i++) {
             List<Node> hiddenNodeGroup = new ArrayList<>();
             for (int j = 0; j < amountOfHiddenNodes; j++) {
-                hiddenNodeGroup.add(new HiddenNode());
+                hiddenNodeGroup.add(new HiddenNode(i + 1, j));
             }
             hiddenNodeGroupList.add(hiddenNodeGroup);
         }
@@ -70,8 +71,25 @@ public class Network {
             for (Node destinationNode : destinationNodeList) {
                 Edge edge = new Edge(sourceNode, destinationNode);
                 sourceNode.addEdge(edge);
+                edgeList.add(edge);
             }
         }
+    }
+
+    public List<Node> getInputNodeGroup() {
+        return inputNodeGroup;
+    }
+
+    public List<List<Node>> getHiddenNodeGroupList() {
+        return hiddenNodeGroupList;
+    }
+
+    public List<Node> getOutputNodeGroup() {
+        return outputNodeGroup;
+    }
+
+    public List<Edge> getEdgeList() {
+        return edgeList;
     }
 
 }
