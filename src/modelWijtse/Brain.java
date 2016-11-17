@@ -11,7 +11,7 @@ public class Brain {
     private ArrayList<Neuron> outputLayer;
     private ArrayList<ArrayList<Neuron>> hiddenLayers;
 
-    public Brain(int inputNeurons, int outputNeurons, int nrOfHiddenLayers, int neuronsPerHiddenLayer, String DNA) {
+    public Brain(int inputNeurons, int outputNeurons, int nrOfHiddenLayers, int neuronsPerHiddenLayer, ArrayList<Double> dna) {
         //Create layers
         inputLayer = new ArrayList<>();
         for (int i = 0; i < inputNeurons; i++) {
@@ -31,24 +31,28 @@ public class Brain {
             }
         }
 
+        int dnaAllele = 0;
         //Link layers
         for (Neuron inputNeuron : inputLayer) {
             for (Neuron hiddenNeuron : hiddenLayers.get(0)) {
-                inputNeuron.addAxon(new Axon(0, hiddenNeuron)); //TODO replace hardcoded 0 with DNA shit
+                inputNeuron.addAxon(new Axon(dna.get(dnaAllele), hiddenNeuron));
+                dnaAllele++;
             }
         }
 
         for (int i = 0; i < nrOfHiddenLayers - 1; i++) {
             for (Neuron srcNeuron : hiddenLayers.get(i)) {
                 for (Neuron destNeuron : hiddenLayers.get(i + 1)) {
-                    srcNeuron.addAxon(new Axon(0, destNeuron)); //TODO replace hardcoded 0 with DNA shit
+                    srcNeuron.addAxon(new Axon(dna.get(dnaAllele), destNeuron));
+                    dnaAllele++;
                 }
             }
         }
 
         for (Neuron hiddenNeuron : hiddenLayers.get(nrOfHiddenLayers - 1)) {
             for (Neuron outputNeuron : outputLayer) {
-                hiddenNeuron.addAxon(new Axon(0, outputNeuron)); //TODO replace hardcoded 0 with DNA shit
+                hiddenNeuron.addAxon(new Axon(dna.get(dnaAllele), outputNeuron));
+                dnaAllele++;
             }
         }
     }

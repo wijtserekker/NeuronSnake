@@ -13,6 +13,10 @@ public class Axon {
         this.destNeuron = destNeuron;
     }
 
+    public double getWeight() {
+        return weight;
+    }
+
     public Neuron getDestNeuron() {
         return destNeuron;
     }
