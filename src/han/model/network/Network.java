@@ -72,7 +72,7 @@ public class Network {
         for (Node sourceNode : sourceNodeList) {
             Collections.shuffle(destinationNodeList);
             for (Node destinationNode : destinationNodeList) {
-                Edge edge = new Edge(sourceNode, destinationNode);
+                Edge edge = new Edge(sourceNode, destinationNode, this);
                 sourceNode.addEdge(edge);
                 edgeList.add(edge);
             }

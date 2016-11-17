@@ -38,8 +38,8 @@ public class NetworkView extends Application {
     public static final int EFFECTIVE_WIDTH = CANVAS_WIDTH - (2 * X_STANDARD_OFFSET);
     public static final int EFFECTIVE_HEIGHT = CANVAS_HEIGHT - (2 * Y_STANDARD_OFFSET);
     public static final boolean DISPLAY_COORDINATES = false;
-    public static final boolean DISPLAY_STRENGTHS = true;
-    public static final boolean DISPLAY_WEIGHTS = true;
+    public static final boolean DISPLAY_STRENGTHS = false;
+    public static final boolean DISPLAY_WEIGHTS = false;
     public static final double MIN_ALPHA = 0.18;
     public static final int SPACE_BETWEEN_LINES = 12;
     public static final double FONT_SIZE = 9;

@@ -16,6 +16,10 @@ import java.util.List;
 public class Node {
 
 
+    public TypeOfNode getTypeOfNode() {
+        return typeOfNode;
+    }
+
     public enum TypeOfNode {
         INPUT, HIDDEN, OUTPUT;
     }
