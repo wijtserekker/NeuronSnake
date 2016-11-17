@@ -1,4 +1,4 @@
-package wijtse.model;
+package wijtse.model.brain;
 
 import java.util.ArrayList;
 
@@ -17,7 +17,7 @@ public class GeneticAlgorithm {
         ArrayList<Double> result = new ArrayList<>();
 
         for (int i = 0; i < dnaSize; i++) {
-            result.add(1.0);
+            result.add(Math.random()*8-4);
         }
 
         return result;

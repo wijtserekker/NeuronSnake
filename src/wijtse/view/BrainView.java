@@ -1,6 +1,7 @@
 package wijtse.view;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -10,12 +11,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import wijtse.model.Axon;
-import wijtse.model.Brain;
-import wijtse.model.GeneticAlgorithm;
-import wijtse.model.Neuron;
+import wijtse.model.brain.Axon;
+import wijtse.model.brain.Brain;
+import wijtse.model.brain.GeneticAlgorithm;
+import wijtse.model.brain.Neuron;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by wijtse on 17-11-16.
@@ -24,12 +26,14 @@ public class BrainView extends Application {
 
     private static final int MAX_NEURON_SIZE = 80;
     private static final int MAX_LAYER_GAP = 300;
-    public static int CANVAS_WIDTH = 1024;
-    public static int CANVAS_HEIGHT = 500;//768;
-    public static int CANVAS_MIN_MARGIN = 20;
+    private static int CANVAS_WIDTH = 1024;
+    private static int CANVAS_HEIGHT = 500;//768;
+    private static int CANVAS_MIN_MARGIN = 20;
 
     private static Brain brain;
     private static GeneticAlgorithm geneticAlgorithm;
+    private static Object monitor = new Object();
+    private static boolean running = true;
 
     private Group root;
     private StackPane canvasHolder;
@@ -42,17 +46,40 @@ public class BrainView extends Application {
     private ArrayList<Integer> yMargins;
 
     public static void main(String[] args) {
-        int inputNeurons = 5;
+        int inputNeurons = 15;
         int outputNeurons = 2;
         int hiddenLayers = 2;
-        int neuronsPerHiddenLayer = 5;
+        int neuronsPerHiddenLayer = 15;
 
         int axons = inputNeurons * neuronsPerHiddenLayer + outputNeurons * neuronsPerHiddenLayer + (hiddenLayers - 1) * neuronsPerHiddenLayer * neuronsPerHiddenLayer;
 
         geneticAlgorithm = new GeneticAlgorithm(axons);
 
-        brain = new Brain(5, 2, 2, 5, geneticAlgorithm.getRandomDNA());
+        brain = new Brain(inputNeurons, outputNeurons, hiddenLayers, neuronsPerHiddenLayer, geneticAlgorithm.getRandomDNA());
+        new Thread() {
+            public void run() {
+                BrainView.pleaseStart(args);
+            }
+        }.start();
+        while(true) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            ArrayList<Double> input = new ArrayList<>();
+            for (int i = 0; i < inputNeurons; i++) {
+                input.add(Math.random() > 0.5 ? 1.0 : 0.0);
+            }
+            long startTime = new Date().getTime();
+            ArrayList<Double> output = brain.think(input);
+            long endTime = new Date().getTime();
+            System.out.println(endTime - startTime + " " + output);
+            BrainView.updateCanvas();
+        }
+    }
 
+    public static void pleaseStart(String[] args) {
         launch(args);
     }
 
@@ -74,6 +101,23 @@ public class BrainView extends Application {
         root.getChildren().add(canvasHolder);
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
+        System.out.println("hi");
+        new Thread() {
+            @Override
+            public void run() {
+                while (running) {
+                    synchronized (monitor) {
+                        try {
+                            monitor.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        draw();
+                    }
+                }
+            }
+        }.start();
+        System.out.println("ho");
     }
 
     private void draw() {
@@ -153,4 +197,16 @@ public class BrainView extends Application {
         yMargins.add((CANVAS_HEIGHT - neuronSize * brain.getOutputLayer().size() - neuronSize * (brain.getOutputLayer().size() - 1)) / 2);
     }
 
+    public static void updateCanvas() {
+        synchronized (monitor) {
+            monitor.notify();
+        }
+    }
+
+    public static void stopLoop() {
+        running = false;
+        synchronized (monitor) {
+            monitor.notify();
+        }
+    }
 }

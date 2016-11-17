@@ -1,4 +1,4 @@
-package wijtse.model;
+package wijtse.model.brain;
 
 /**
  * Created by wijtse on 16-11-16.

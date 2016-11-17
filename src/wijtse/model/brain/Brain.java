@@ -1,4 +1,4 @@
-package wijtse.model;
+package wijtse.model.brain;
 
 import java.util.ArrayList;
 
