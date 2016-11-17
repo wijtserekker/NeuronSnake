@@ -1,9 +1,5 @@
 package han.model.network;
 
-import han.model.network.nodes.HiddenNode;
-import han.model.network.nodes.InputNode;
-import han.model.network.nodes.OutputNode;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +16,8 @@ public class Network {
     private List<List<Node>> hiddenNodeGroupList = new ArrayList<>();
     private List<Node> outputNodeGroup = new ArrayList<>();
     private List<Edge> edgeList = new ArrayList<>();
+    private int totalAmountOfGroups = 0;
+    private List<Integer> dimensions = new ArrayList<>();
 
     /**
      * Constructor for the network when provided with all the variable amount of nodes per node group
@@ -30,6 +28,8 @@ public class Network {
      */
     public Network(int amountOfInputNodes, int amountOfHiddenNodeGroups, int amountOfHiddenNodes,
                    int amountOfOutputNodes) {
+        addToDimensions(amountOfInputNodes, amountOfHiddenNodeGroups, amountOfHiddenNodes,
+                amountOfOutputNodes);
         createNodes(amountOfInputNodes, amountOfHiddenNodeGroups, amountOfHiddenNodes, amountOfOutputNodes);
         try {
             createEdges(inputNodeGroup, hiddenNodeGroupList.get(0));
@@ -51,16 +51,17 @@ public class Network {
      */
     private void createNodes(int amountOfInputNodes, int amountOfHiddenNodeGroups, int amountOfHiddenNodes,
                              int amountOfOutputNodes) {
+        this.totalAmountOfGroups = 1 + amountOfHiddenNodeGroups + 1;
         for (int i = 0; i < amountOfInputNodes; i++) {
-            inputNodeGroup.add(new InputNode(0, i));
+            inputNodeGroup.add(new Node(0, i, Node.TypeOfNode.INPUT));
         }
         for (int i = 0; i < amountOfOutputNodes; i++) {
-            outputNodeGroup.add(new OutputNode(amountOfHiddenNodeGroups + 1, i));
+            outputNodeGroup.add(new Node(amountOfHiddenNodeGroups + 1, i, Node.TypeOfNode.OUTPUT));
         }
         for (int i = 0; i < amountOfHiddenNodeGroups; i++) {
             List<Node> hiddenNodeGroup = new ArrayList<>();
             for (int j = 0; j < amountOfHiddenNodes; j++) {
-                hiddenNodeGroup.add(new HiddenNode(i + 1, j));
+                hiddenNodeGroup.add(new Node(i + 1, j, Node.TypeOfNode.HIDDEN));
             }
             hiddenNodeGroupList.add(hiddenNodeGroup);
         }
@@ -74,6 +75,29 @@ public class Network {
                 edgeList.add(edge);
             }
         }
+    }
+
+    public void addToDimensions(int a, int b, int c, int d) {
+        dimensions.add(a);
+        dimensions.add(b);
+        dimensions.add(c);
+        dimensions.add(d);
+    }
+
+    public int getAmountOfInputNodes() {
+        return dimensions.get(0);
+    }
+
+    public int getAmountOfHiddenNodeGroups() {
+        return dimensions.get(1);
+    }
+
+    public int getAmountOfHiddenNodes() {
+        return dimensions.get(2);
+    }
+
+    public int getAmountOfOutputNodes() {
+        return dimensions.get(3);
     }
 
     public List<Node> getInputNodeGroup() {
@@ -92,4 +116,7 @@ public class Network {
         return edgeList;
     }
 
+    public int getTotalAmountOfGroups() {
+        return totalAmountOfGroups;
+    }
 }
