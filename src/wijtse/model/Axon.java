@@ -1,4 +1,4 @@
-package modelWijtse;
+package wijtse.model;
 
 /**
  * Created by wijtse on 16-11-16.
