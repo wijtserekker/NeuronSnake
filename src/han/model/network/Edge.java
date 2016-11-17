@@ -1,6 +1,7 @@
 package han.model.network;
 
 import han.view.Graphics;
+import han.view.network.NetworkView;
 import javafx.scene.paint.Color;
 
 import java.util.Random;
@@ -29,9 +30,11 @@ public class Edge {
         if (random.nextDouble() < CHANCE_TO_GET_WEIGHT) {
             this.weight = MIN_WEIGHT + (MAX_WEIGHT - MIN_WEIGHT) * random.nextDouble();
             if (weight > 0) {
-                color = new Color(1 - weight, 1, 1 - weight, 1);
+                color = new Color(1 - weight, 1, 1 - weight,
+                        NetworkView.MIN_ALPHA + ((1 - NetworkView.MIN_ALPHA) * sourceNode.getStrength()));
             } else if (weight < 0) {
-                color = new Color(1, 1 + weight, 1 + weight , 1);
+                color = new Color(1, 1 + weight, 1 + weight ,
+                        NetworkView.MIN_ALPHA + ((1 - NetworkView.MIN_ALPHA) * sourceNode.getStrength()));
             }
         } else {
             this.weight = 0;
@@ -58,5 +61,24 @@ public class Edge {
 
     public Graphics getGraphics() {
         return graphics;
+    }
+
+    public void updateColor() {
+        Color color = null;
+        if (weight > 0) {
+            color = new Color(1 - weight, 1, 1 - weight,
+                    NetworkView.MIN_ALPHA + ((1 - NetworkView.MIN_ALPHA) * sourceNode.getStrength()));
+        } else if (weight < 0) {
+            color = new Color(1, 1 + weight, 1 + weight ,
+                    NetworkView.MIN_ALPHA + ((1 - NetworkView.MIN_ALPHA) * sourceNode.getStrength()));
+        } else {
+            this.weight = 0;
+            color = new Color(0, 0, 0, 0);
+        }
+        graphics.setColor(color);
+    }
+
+    public double getWeight() {
+        return weight;
     }
 }

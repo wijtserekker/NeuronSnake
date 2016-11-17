@@ -1,6 +1,5 @@
 package han.view;
 
-import han.view.network.ViewNetwork;
 import javafx.scene.paint.Color;
 
 /**
@@ -10,16 +9,15 @@ import javafx.scene.paint.Color;
 public class Graphics {
     private int x;
     private int y;
-    private int px;
-    private int py;
     private Color color;
     private int lw;
+    private int py;
+    private int px;
+    private int nodeSize;
 
     public Graphics(int x, int y, Color color) {
         this.x = x;
         this.y = y;
-        this.px = (x + 1) * ViewNetwork.X_STANDARD_OFFSET;
-        this.py = (y + 1) * ViewNetwork.Y_STANDARD_OFFSET;
         this.color = color;
     }
 
@@ -40,14 +38,6 @@ public class Graphics {
         return y;
     }
 
-    public int getPx() {
-        return px;
-    }
-
-    public int getPy() {
-        return py;
-    }
-
     public Color getColor() {
         return color;
     }
@@ -58,5 +48,29 @@ public class Graphics {
 
     public int getLw() {
         return lw;
+    }
+
+    public int getPy() {
+        return py;
+    }
+
+    public void setPy(int py) {
+        this.py = py;
+    }
+
+    public int getPx() {
+        return px;
+    }
+
+    public void setPx(int px) {
+        this.px = px;
+    }
+
+    public int getNodeSize() {
+        return nodeSize;
+    }
+
+    public void setNodeSize(int nodeSize) {
+        this.nodeSize = nodeSize;
     }
 }
