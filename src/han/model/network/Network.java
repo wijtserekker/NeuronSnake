@@ -1,7 +1,6 @@
 package han.model.network;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by han on 16-11-16.
@@ -21,10 +20,11 @@ public class Network {
 
     /**
      * Constructor for the network when provided with all the variable amount of nodes per node group
-     * @param amountOfInputNodes Amount of input nodes in input node group
+     *
+     * @param amountOfInputNodes       Amount of input nodes in input node group
      * @param amountOfHiddenNodeGroups Amount of hidden node group
-     * @param amountOfHiddenNodes Amount of hidden Nodes per hidden node group
-     * @param amountOfOutputNodes Amount of output Nodes per output node group
+     * @param amountOfHiddenNodes      Amount of hidden Nodes per hidden node group
+     * @param amountOfOutputNodes      Amount of output Nodes per output node group
      */
     public Network(int amountOfInputNodes, int amountOfHiddenNodeGroups, int amountOfHiddenNodes,
                    int amountOfOutputNodes) {
@@ -44,10 +44,11 @@ public class Network {
 
     /**
      * Adds the nodes to the network
-     * @param amountOfInputNodes Amount of input nodes in input node group
+     *
+     * @param amountOfInputNodes       Amount of input nodes in input node group
      * @param amountOfHiddenNodeGroups Amount of hidden node group
-     * @param amountOfHiddenNodes Amount of hidden Nodes per hidden node group
-     * @param amountOfOutputNodes Amount of output Nodes per output node group
+     * @param amountOfHiddenNodes      Amount of hidden Nodes per hidden node group
+     * @param amountOfOutputNodes      Amount of output Nodes per output node group
      */
     private void createNodes(int amountOfInputNodes, int amountOfHiddenNodeGroups, int amountOfHiddenNodes,
                              int amountOfOutputNodes) {
@@ -69,6 +70,7 @@ public class Network {
 
     private void createEdges(List<Node> sourceNodeList, List<Node> destinationNodeList) {
         for (Node sourceNode : sourceNodeList) {
+            Collections.shuffle(destinationNodeList);
             for (Node destinationNode : destinationNodeList) {
                 Edge edge = new Edge(sourceNode, destinationNode);
                 sourceNode.addEdge(edge);
@@ -82,6 +84,91 @@ public class Network {
         dimensions.add(b);
         dimensions.add(c);
         dimensions.add(d);
+    }
+
+    public void propagateSignal() {
+        initStage();
+        propagateStage();
+        updateStage();
+    }
+
+    private void updateStage() {
+
+        for (List<Node> hiddenNodeGroup : hiddenNodeGroupList) {
+            for (Node hiddenNode : hiddenNodeGroup) {
+                hiddenNode.applyActivationFunction();
+                hiddenNode.updateColor();
+                for (Edge edge : hiddenNode.getEdges()) {
+                    edge.updateColor();
+                }
+            }
+        }
+
+        for (Node outputNode : outputNodeGroup) {
+            outputNode.applyActivationFunction();
+            outputNode.updateColor();
+        }
+    }
+
+    private void propagateStage() {
+        for (Node inputNode : inputNodeGroup) {
+            if (inputNode.getStrength() > 0) {
+                for (Edge edge : inputNode.getEdges()) {
+                    if (edge.getWeight() != 0) {
+                        edge.getDestinationNode().addToInputSignals(edge.getWeight() * inputNode.getStrength());
+                    }
+                }
+            }
+        }
+
+        for (List<Node> hiddenNodeGroup : hiddenNodeGroupList) {
+            for (Node hiddenNode : hiddenNodeGroup) {
+                hiddenNode.applyActivationFunction();
+                hiddenNode.updateColor();
+                for (Edge edge : hiddenNode.getEdges()) {
+                    edge.updateColor();
+                }
+                if (hiddenNode.getStrength() > 0) {
+                    for (Edge edge : hiddenNode.getEdges()) {
+                        if (edge.getWeight() != 0) {
+                            edge.getDestinationNode().addToInputSignals(edge.getWeight() * hiddenNode.getStrength());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void initStage() {
+        Random random = new Random();
+        for (Node inputNode : inputNodeGroup) {
+            //TODO This function currently sets the inputs to a random double, this should be from surroundings
+            //inputNode.getInputStrenght() or so
+            double rand = random.nextDouble();
+            if (rand < 0.5) {
+                inputNode.setStrength(0);
+            } else {
+                inputNode.setStrength(random.nextDouble());
+            }
+            inputNode.updateColor();
+            for (Edge edge : inputNode.getEdges()) {
+                edge.updateColor();
+            }
+        }
+
+        //Reset hidden nodes
+        for (List<Node> hiddenNodeGroup : hiddenNodeGroupList) {
+            for (Node hiddenNode : hiddenNodeGroup) {
+                hiddenNode.setStrength(0);
+                hiddenNode.setInputSignals(0);
+            }
+        }
+
+        //Reset output nodes
+        for (Node outputNode : outputNodeGroup) {
+            outputNode.setStrength(0);
+            outputNode.setInputSignals(0);
+        }
     }
 
     public int getAmountOfInputNodes() {

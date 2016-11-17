@@ -20,14 +20,19 @@ public class Edge {
     public static final int MIN_WEIGHT = -1;
     public static final int MAX_WEIGHT = 1;
 
-    public static final double CHANCE_TO_GET_WEIGHT = 0.25;
+    public static final double CHANCE_TO_GET_WEIGHT = 0.8;
+    public static final double WEIGHT_CHANCE_MODIFIER = 4;
 
     public Edge(Node sourceNode, Node destinationNode) {
         this.sourceNode = sourceNode;
         Color color = null;
         this.destinationNode = destinationNode;
         Random random = new Random();
-        if (random.nextDouble() < CHANCE_TO_GET_WEIGHT) {
+        double chanceToGetWeight = CHANCE_TO_GET_WEIGHT;
+        if (sourceNode.getEdges().size() != 0) {
+            chanceToGetWeight = 1 / (WEIGHT_CHANCE_MODIFIER * sourceNode.getEdges().size());
+        }
+        if (random.nextDouble() < chanceToGetWeight) {
             this.weight = MIN_WEIGHT + (MAX_WEIGHT - MIN_WEIGHT) * random.nextDouble();
             if (weight > 0) {
                 color = new Color(1 - weight, 1, 1 - weight,

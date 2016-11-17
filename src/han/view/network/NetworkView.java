@@ -30,17 +30,17 @@ public class NetworkView extends Application {
     private static Network network;
     public static NumberFormat formatter = new DecimalFormat("#0.00");
 
-    public static final int CANVAS_WIDTH = 1000;
-    public static final int CANVAS_HEIGHT = 600;
+    public static final int CANVAS_WIDTH = 1366;
+    public static final int CANVAS_HEIGHT = 768;
     public static final int NODE_SIZE_MODIFIER = 2;
     public static final int X_STANDARD_OFFSET = 0;
     public static final int Y_STANDARD_OFFSET = 20;
     public static final int EFFECTIVE_WIDTH = CANVAS_WIDTH - (2 * X_STANDARD_OFFSET);
     public static final int EFFECTIVE_HEIGHT = CANVAS_HEIGHT - (2 * Y_STANDARD_OFFSET);
-    public static final boolean DISPLAY_COORDINATES = true;
+    public static final boolean DISPLAY_COORDINATES = false;
     public static final boolean DISPLAY_STRENGTHS = true;
     public static final boolean DISPLAY_WEIGHTS = true;
-    public static final double MIN_ALPHA = 0.2;
+    public static final double MIN_ALPHA = 0.18;
     public static final int SPACE_BETWEEN_LINES = 12;
     public static final double FONT_SIZE = 9;
     public static final int FONT_LINE_WIDTH = 1;
@@ -66,19 +66,13 @@ public class NetworkView extends Application {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode().equals(KeyCode.ENTER)) {
-                    List<Node> inputNodeGroup = network.getInputNodeGroup();
-                    Random random = new Random();
-                    for (Node inputNode : inputNodeGroup) {
-                        inputNode.setStrength(random.nextDouble());
-                        double rand = random.nextDouble();
-                        if (rand < 0.5) {
-                            inputNode.setStrength(0);
-                        }
-                        inputNode.updateColor();
-                        for (Edge edge : inputNode.getEdges()) {
-                            edge.updateColor();
-                        }
-                    }
+                    network.propagateSignal();
+                    canvas.getGraphicsContext2D().setFill(Color.BLACK);
+                    canvas.getGraphicsContext2D().fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+                    initNetwork(canvas.getGraphicsContext2D());
+                } else if (keyEvent.getCode().equals(KeyCode.SPACE)) {
+                    network = new Network (network.getAmountOfInputNodes(), network.getAmountOfHiddenNodeGroups(),
+                            network.getAmountOfHiddenNodes(), network.getAmountOfOutputNodes());
                     canvas.getGraphicsContext2D().setFill(Color.BLACK);
                     canvas.getGraphicsContext2D().fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
                     initNetwork(canvas.getGraphicsContext2D());

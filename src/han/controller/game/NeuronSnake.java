@@ -10,7 +10,7 @@ import han.view.network.NetworkView;
 public class NeuronSnake {
 
     public static void main(String[] args) {
-        Network network = new Network(5, 2, 7, 2);
+        Network network = new Network(15, 2, 7, 2);
         NetworkView.startNetwork(network);
     }
 

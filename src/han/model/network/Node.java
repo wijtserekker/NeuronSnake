@@ -11,9 +11,10 @@ import java.util.List;
 
 /**
  * Created by han on 16-11-16.
- * Hidden nodes in hidden layer of network
+ * Nodes in a layer of network
  */
 public class Node {
+
 
     public enum TypeOfNode {
         INPUT, HIDDEN, OUTPUT;
@@ -31,15 +32,18 @@ public class Node {
     public static final double OUTPUT_G = 100.0 / 255;
     public static final double OUTPUT_B = 180.0 / 255;
 
+    public static final double ACTIVATION_MODIFIER = 5.0;
 
     private List<Edge> edgeList = new ArrayList<>();
     private Graphics graphics;
     private double strength;
     private TypeOfNode typeOfNode;
+    private double inputSignals;
 
     public Node(int x, int y, TypeOfNode typeOfNode) {
         this.strength = 0;
         this.typeOfNode = typeOfNode;
+        this.inputSignals = 0;
         if (typeOfNode.equals(TypeOfNode.INPUT)) {
             this.graphics = new Graphics(x, y, new Color(INPUT_R, INPUT_G, INPUT_B,
                     NetworkView.MIN_ALPHA + ((1 - NetworkView.MIN_ALPHA) * strength)));
@@ -73,6 +77,10 @@ public class Node {
         this.strength = strength;
     }
 
+    public void addToInputSignals(double d) {
+        this.inputSignals += d;
+    }
+
     public void updateColor() {
         if (typeOfNode.equals(TypeOfNode.INPUT)) {
             graphics.setColor(new Color(INPUT_R, INPUT_G, INPUT_B,
@@ -84,5 +92,21 @@ public class Node {
             graphics.setColor(new Color(OUTPUT_R, OUTPUT_G, OUTPUT_B,
                     NetworkView.MIN_ALPHA + ((1 - NetworkView.MIN_ALPHA) * strength)));
         }
+    }
+
+    public void applyActivationFunction() {
+        //System.out.println("Node\t\t\t\t\t"+ graphics.locationToString());
+        //System.out.println("\tInput signals \t\t" + inputSignals + " / " + (ACTIVATION_MODIFIER * inputSignals));
+        strength = 1.0/(1.0 + Math.exp(-1 * (ACTIVATION_MODIFIER * inputSignals)));
+        //System.out.println("\tStrength (a)\t\t" + strength);
+    }
+
+
+    public double getInputSignals() {
+        return inputSignals;
+    }
+
+    public void setInputSignals(double inputSignals) {
+        this.inputSignals = inputSignals;
     }
 }
