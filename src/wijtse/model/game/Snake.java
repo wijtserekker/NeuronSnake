@@ -1,6 +1,8 @@
 package wijtse.model.game;
 
+import javafx.scene.canvas.GraphicsContext;
 import wijtse.model.brain.Brain;
+import wijtse.view.BoardView;
 
 import java.util.ArrayList;
 
@@ -30,9 +32,11 @@ public class Snake {
     }
 
     public void move() {
+        age++;
+
         //Move all the segments forward
         for (SnakeSegment segment : segments) {
-            segment.update();
+            segment.move();
         }
         SnakeSegment.Direction lastSegmentDirection = segments.get(segments.size() - 1).getDirection();
         //Set the direction of a segment to the direction of the segment in front of it.
@@ -60,8 +64,47 @@ public class Snake {
         }
     }
 
-    public void think() {
+    public void adjustDirection() {
+        ArrayList<Double> decision = brain.think(look());
+        if (decision.get(0) > 0.5 && decision.get(1) < 0.5) {
+            turnRight();
+        } else if (decision.get(1) > 0.5 && decision.get(0) < 0.5) {
+            turnLeft();
+        }
+    }
 
+    private void turnRight() {
+        switch (segments.get(0).getDirection()) {
+            case UP:
+                segments.get(0).setDirection(SnakeSegment.Direction.RIGTH);
+                break;
+            case DOWN:
+                segments.get(0).setDirection(SnakeSegment.Direction.LEFT);
+                break;
+            case LEFT:
+                segments.get(0).setDirection(SnakeSegment.Direction.UP);
+                break;
+            case RIGTH:
+                segments.get(0).setDirection(SnakeSegment.Direction.DOWN);
+                break;
+        }
+    }
+
+    private void turnLeft() {
+        switch (segments.get(0).getDirection()) {
+            case UP:
+                segments.get(0).setDirection(SnakeSegment.Direction.LEFT);
+                break;
+            case DOWN:
+                segments.get(0).setDirection(SnakeSegment.Direction.RIGTH);
+                break;
+            case LEFT:
+                segments.get(0).setDirection(SnakeSegment.Direction.DOWN);
+                break;
+            case RIGTH:
+                segments.get(0).setDirection(SnakeSegment.Direction.UP);
+                break;
+        }
     }
 
     private ArrayList<Double> look() {
@@ -93,10 +136,33 @@ public class Snake {
             }
             result.add(neuronValue);
 
-            //TODO look for wall
-
+            //Look for wall
+            neuronValue = 0.0;
+            for (int i = 1; i <= VIEW_DISTANCE; i++) {
+                if (headX + i * viewLine.getXDistance() < 0 || headX + i * viewLine.getXDistance() >= board.getWidth() ||
+                        headY + i * viewLine.getYDistance() < 0 || headY + i * viewLine.getYDistance() >= board.getHeight()) {
+                    neuronValue = (double)(4 - i) / (double)(VIEW_DISTANCE);
+                }
+            }
+            result.add(neuronValue);
         }
-
         return result;
+    }
+
+    public int getFitness() {
+        return 10 * segments.size() + age;
+    }
+
+    public ArrayList<Double> getDna() {
+        return dna;
+    }
+
+    public void draw(GraphicsContext graphics) {
+        graphics.setFill(BoardView.SNAKE_HEAD_COLOR);
+        segments.get(0).draw(graphics);
+        graphics.setFill(BoardView.SNAKE_COLOR);
+        for (int i = 1; i < segments.size(); i++) {
+            segments.get(i).draw(graphics);
+        }
     }
 }

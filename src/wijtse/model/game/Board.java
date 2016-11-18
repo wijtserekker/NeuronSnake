@@ -1,6 +1,9 @@
 package wijtse.model.game;
 
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import wijtse.model.brain.GeneticAlgorithm;
+import wijtse.view.BoardView;
 
 import java.util.ArrayList;
 
@@ -47,7 +50,7 @@ public class Board {
     public void update() {
         spawnFood();
         for (Snake snake : population) {
-            snake.think();
+            snake.adjustDirection();
             snake.move();
         }
     }
@@ -89,6 +92,15 @@ public class Board {
         return result;
     }
 
+    public void draw(GraphicsContext graphics) {
+        graphics.setFill(BoardView.BACKGROUND_COLOR);
+        graphics.fillRect(0, 0, width * BoardView.BOARD_TILE_SIZE, height * BoardView.BOARD_TILE_SIZE);
+        for (Snake snake : population) {
+            snake.draw(graphics);
+        }
+        //TODO draw food
+    }
+
     public int getWidth() {
         return width;
     }
@@ -96,5 +108,4 @@ public class Board {
     public int getHeight() {
         return height;
     }
-
 }
