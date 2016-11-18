@@ -4,58 +4,49 @@ import han.view.Graphics;
 import han.view.network.NetworkView;
 import javafx.scene.paint.Color;
 
-import java.util.Random;
-
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 /**
  * Created by han on 16-11-16.
  * Class representing an edge between two nodes
  */
 public class Edge {
 
+    /**
+     * Private Variables
+     */
     private Node sourceNode;
     private Node destinationNode;
     private double weight;
     private Graphics graphics;
+    public static NumberFormat formatter = new DecimalFormat("#0.00");
 
+    /**
+     * Constants
+     */
     public static final int MIN_WEIGHT = -1;
     public static final int MAX_WEIGHT = 1;
+    public static final double CHANCE_TO_GET_WEIGHT = 0.6;
+    public static final double WEIGHT_CHANCE_EDGES_MODIFIER = 1.2;
+    public static final double WEIGHT_CHANCE_PEERS_MODIFIER = 2;
+    public static final double WEIGHT_CHANCE_DESTINATIONS_MODIFIER = 4;
 
-    public static final double CHANCE_TO_GET_WEIGHT = 0.75;
-    public static final double WEIGHT_CHANCE_EDGES_MODIFIER = 0.7;
-    public static final double WEIGHT_CHANCE_PEERS_MODIFIER = 1.2;
-
-    public Edge(Node sourceNode, Node destinationNode, Network network) {
-        this.sourceNode = sourceNode;
+    /**
+     * Updates the color and alpha of the edge
+     */
+    public void updateColor() {
         Color color = null;
-        this.destinationNode = destinationNode;
-        Random random = new Random();
-        double chanceToGetWeight = CHANCE_TO_GET_WEIGHT;
-        int peers = 1;
-        if (sourceNode.getTypeOfNode().equals(Node.TypeOfNode.INPUT)) {
-            peers = network.getAmountOfInputNodes();
-        } else if (sourceNode.getTypeOfNode().equals(Node.TypeOfNode.HIDDEN)) {
-            peers = network.getAmountOfHiddenNodes();
-        } else if (sourceNode.getTypeOfNode().equals(Node.TypeOfNode.OUTPUT)) {
-            peers = network.getAmountOfOutputNodes();
-        }
-        if (sourceNode.getEdges().size() != 0) {
-            chanceToGetWeight = CHANCE_TO_GET_WEIGHT / ((peers * WEIGHT_CHANCE_PEERS_MODIFIER) *
-                    (WEIGHT_CHANCE_EDGES_MODIFIER * sourceNode.getEdges().size()) );
-        }
-        if (random.nextDouble() < chanceToGetWeight) {
-            this.weight = MIN_WEIGHT + (MAX_WEIGHT - MIN_WEIGHT) * random.nextDouble();
-            if (weight > 0) {
-                color = new Color(1 - weight, 1, 1 - weight,
-                        NetworkView.MIN_ALPHA + ((1 - NetworkView.MIN_ALPHA) * sourceNode.getStrength()));
-            } else if (weight < 0) {
-                color = new Color(1, 1 + weight, 1 + weight ,
-                        NetworkView.MIN_ALPHA + ((1 - NetworkView.MIN_ALPHA) * sourceNode.getStrength()));
-            }
+        if (weight > 0) {
+            color = new Color(1 - weight, 1, 1 - weight,
+                    NetworkView.MIN_ALPHA + ((1 - NetworkView.MIN_ALPHA) * sourceNode.getStrength()));
+        } else if (weight < 0) {
+            color = new Color(1, 1 + weight, 1 + weight ,
+                    NetworkView.MIN_ALPHA + ((1 - NetworkView.MIN_ALPHA) * sourceNode.getStrength()));
         } else {
             this.weight = 0;
             color = new Color(0, 0, 0, 0);
         }
-        this.graphics = new Graphics(color, 2);
+        graphics.setColor(color);
     }
 
     public Node getSourceNode() {
@@ -78,22 +69,23 @@ public class Edge {
         return graphics;
     }
 
-    public void updateColor() {
-        Color color = null;
-        if (weight > 0) {
-            color = new Color(1 - weight, 1, 1 - weight,
-                    NetworkView.MIN_ALPHA + ((1 - NetworkView.MIN_ALPHA) * sourceNode.getStrength()));
-        } else if (weight < 0) {
-            color = new Color(1, 1 + weight, 1 + weight ,
-                    NetworkView.MIN_ALPHA + ((1 - NetworkView.MIN_ALPHA) * sourceNode.getStrength()));
-        } else {
-            this.weight = 0;
-            color = new Color(0, 0, 0, 0);
-        }
-        graphics.setColor(color);
-    }
-
     public double getWeight() {
         return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
+    public void setGraphics(Graphics graphics) {
+        this.graphics = graphics;
+    }
+
+    public String toString() {
+        String result = "";
+        result = result + "[" + sourceNode.getGraphics().locationToString() + ", "
+                + destinationNode.getGraphics().locationToString() + ", "
+                + String.valueOf(formatter.format(weight)) + "]\t\t";
+        return result;
     }
 }
