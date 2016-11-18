@@ -1,5 +1,8 @@
 package wijtse.model.game;
 
+import javafx.scene.canvas.GraphicsContext;
+import wijtse.view.BoardView;
+
 /**
  * Created by wijtse on 18-11-16.
  */
@@ -19,7 +22,7 @@ public class SnakeSegment {
         this.direction = direction;
     }
 
-    public void update() {
+    public void move() {
         switch (direction) {
             case LEFT:
                 x--;
@@ -34,6 +37,10 @@ public class SnakeSegment {
                 y++;
                 break;
         }
+    }
+
+    public void draw(GraphicsContext graphics) {
+        graphics.fillRect(BoardView.BOARD_TILE_SIZE * x, BoardView.BOARD_TILE_SIZE * y, BoardView.BOARD_TILE_SIZE, BoardView.BOARD_TILE_SIZE);
     }
 
     public void setDirection(Direction direction) {

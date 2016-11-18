@@ -45,19 +45,6 @@ public class BrainView extends Application {
     private int xMargin;
     private ArrayList<Integer> yMargins;
 
-    public static void main(String[] args) {
-        int inputNeurons = 15;
-        int outputNeurons = 2;
-        int hiddenLayers = 2;
-        int neuronsPerHiddenLayer = 15;
-
-        int axons = inputNeurons * neuronsPerHiddenLayer + outputNeurons * neuronsPerHiddenLayer + (hiddenLayers - 1) * neuronsPerHiddenLayer * neuronsPerHiddenLayer;
-
-        geneticAlgorithm = new GeneticAlgorithm(axons);
-
-        startBrainVisualization(new Brain(inputNeurons, outputNeurons, hiddenLayers, neuronsPerHiddenLayer, geneticAlgorithm.getRandomDNA()));
-    }
-
     public static void startBrainVisualization(Brain brain) {
         BrainView.brain = brain;
         ArrayList<Double> input = new ArrayList<Double>();
@@ -75,7 +62,6 @@ public class BrainView extends Application {
 
         canvasHolder = new StackPane();
         //Setup canvas
-        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
         canvasGraphics = canvas.getGraphicsContext2D();
 
