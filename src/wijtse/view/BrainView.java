@@ -1,7 +1,7 @@
 package wijtse.view;
 
 import javafx.application.Application;
-import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -11,13 +11,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import wijtse.model.brain.Axon;
 import wijtse.model.brain.Brain;
 import wijtse.model.brain.GeneticAlgorithm;
 import wijtse.model.brain.Neuron;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by wijtse on 17-11-16.
@@ -55,32 +55,17 @@ public class BrainView extends Application {
 
         geneticAlgorithm = new GeneticAlgorithm(axons);
 
-        brain = new Brain(inputNeurons, outputNeurons, hiddenLayers, neuronsPerHiddenLayer, geneticAlgorithm.getRandomDNA());
-        new Thread() {
-            public void run() {
-                BrainView.pleaseStart(args);
-            }
-        }.start();
-        while(true) {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            ArrayList<Double> input = new ArrayList<>();
-            for (int i = 0; i < inputNeurons; i++) {
-                input.add(Math.random() > 0.5 ? 1.0 : 0.0);
-            }
-            long startTime = new Date().getTime();
-            ArrayList<Double> output = brain.think(input);
-            long endTime = new Date().getTime();
-            System.out.println(endTime - startTime + " " + output);
-            BrainView.updateCanvas();
-        }
+        startBrainVisualization(new Brain(inputNeurons, outputNeurons, hiddenLayers, neuronsPerHiddenLayer, geneticAlgorithm.getRandomDNA()));
     }
 
-    public static void pleaseStart(String[] args) {
-        launch(args);
+    public static void startBrainVisualization(Brain brain) {
+        BrainView.brain = brain;
+        ArrayList<Double> input = new ArrayList<Double>();
+        for (int i = 0; i < 15; i++) {
+            input.add(Math.random() > 0.7 ? 1.0 : 0.0);
+        }
+        brain.think(input);
+        launch();
     }
 
     @Override
@@ -101,8 +86,8 @@ public class BrainView extends Application {
         root.getChildren().add(canvasHolder);
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
-        System.out.println("hi");
-        new Thread() {
+
+        Thread dinkie = new Thread() {
             @Override
             public void run() {
                 while (running) {
@@ -116,8 +101,16 @@ public class BrainView extends Application {
                     }
                 }
             }
-        }.start();
-        System.out.println("ho");
+        };
+        dinkie.start();
+
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            public void handle(WindowEvent we) {
+                BrainView.stopLoop();
+                System.out.println("Stage is closing");
+            }
+        });
+
     }
 
     private void draw() {
@@ -132,11 +125,12 @@ public class BrainView extends Application {
             int axonNr = 0;
             for (Axon axon : brain.getInputLayer().get(i).getAxons()) {
                 if (axon.getWeight() < 0) {
-                    canvasGraphics.setStroke(Color.RED);
+                    canvasGraphics.setStroke(Color.rgb(255, 0, 0, 0.1 + 0.9 * brain.getInputLayer().get(i).getValue()));
+                } else {
+                    canvasGraphics.setStroke(Color.rgb(0, 255, 0, 0.1 + 0.9 * brain.getInputLayer().get(i).getValue()));
                 }
                 canvasGraphics.strokeLine(xMargin + neuronSize / 2, yMargins.get(0) + i*2*neuronSize + neuronSize / 2, xMargin + neuronSize + layerGap + neuronSize / 2, yMargins.get(1) + axonNr*2*neuronSize + neuronSize / 2);
                 axonNr++;
-                canvasGraphics.setStroke(Color.GREEN);
             }
             canvasGraphics.setFill(Color.rgb(255, 255, 255, 0.1 + 0.9 * brain.getInputLayer().get(i).getValue()));
             canvasGraphics.fillOval(xMargin, yMargins.get(0) + i*2*neuronSize, neuronSize, neuronSize);
@@ -148,14 +142,15 @@ public class BrainView extends Application {
                 int axonNr = 0;
                 for (Axon axon : brain.getHiddenLayers().get(i).get(j).getAxons()) {
                     if (axon.getWeight() < 0) {
-                        canvasGraphics.setStroke(Color.RED);
+                        canvasGraphics.setStroke(Color.rgb(255, 0, 0, 0.1 + 0.9 * brain.getHiddenLayers().get(i).get(j).getValue()));
+                    } else {
+                        canvasGraphics.setStroke(Color.rgb(0, 255, 0, 0.1 + 0.9 * brain.getHiddenLayers().get(i).get(j).getValue()));
                     }
                     canvasGraphics.strokeLine(xMargin + (i+1) * (neuronSize + layerGap) + neuronSize / 2,
                             yMargins.get(i+1) + j*2*neuronSize + neuronSize / 2,
                             xMargin + (i+2) * (neuronSize + layerGap) + neuronSize / 2,
                             yMargins.get(i+2) + axonNr*2*neuronSize + neuronSize / 2);
                     axonNr++;
-                    canvasGraphics.setStroke(Color.GREEN);
                 }
                 canvasGraphics.setFill(Color.rgb(255, 255, 255, 0.1 + 0.9 * brain.getHiddenLayers().get(i).get(j).getValue()));
                 canvasGraphics.fillOval(xMargin + (i+1) * (neuronSize + layerGap), yMargins.get(i + 1) + j*2*neuronSize, neuronSize, neuronSize);
