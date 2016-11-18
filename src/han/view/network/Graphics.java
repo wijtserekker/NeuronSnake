@@ -1,4 +1,4 @@
-package han.view;
+package han.view.network;
 
 import javafx.scene.paint.Color;
 
