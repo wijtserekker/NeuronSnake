@@ -1,5 +1,7 @@
 package han.model.network;
 
+import han.controller.network.NetworkController;
+
 import java.util.*;
 
 /**
@@ -14,9 +16,12 @@ public class Network {
     private List<Node> inputNodeGroup = new ArrayList<>();
     private List<List<Node>> hiddenNodeGroupList = new ArrayList<>();
     private List<Node> outputNodeGroup = new ArrayList<>();
-    private List<Edge> edgeList = new ArrayList<>();
+    private HashMap<Integer, Edge> edgeList = new HashMap<>();
     private int totalAmountOfGroups = 0;
     private List<Integer> dimensions = new ArrayList<>();
+
+    private HashMap<Integer, Edge> a = new HashMap<>();
+    private HashMap<Integer, Edge> b = new HashMap<>();
 
     /**
      * Constructor for the network when provided with all the variable amount of nodes per node group
@@ -40,6 +45,12 @@ public class Network {
             createEdges(hiddenNodeGroupList.get(i - 1), hiddenNodeGroupList.get(i));
         }
         createEdges(hiddenNodeGroupList.get(hiddenNodeGroupList.size() - 1), outputNodeGroup);
+
+        //TODO TESTING
+        //edgeList = NetworkController.combineEdges(a, b);
+        //System.out.println(a);
+        //System.out.println(b);
+        System.out.println(edgeList + "\nsize = " + edgeList.size() + "\nactive = " + getActiveEdges(edgeList));
     }
 
     /**
@@ -68,17 +79,25 @@ public class Network {
         }
     }
 
+    /**
+     * Create edges between each node in adjecent layers
+     * @param sourceNodeList list of source nodes
+     * @param destinationNodeList lst of destination nodes
+     */
     private void createEdges(List<Node> sourceNodeList, List<Node> destinationNodeList) {
-        for (Node sourceNode : sourceNodeList) {
-            Collections.shuffle(destinationNodeList);
-            for (Node destinationNode : destinationNodeList) {
-                Edge edge = new Edge(sourceNode, destinationNode, this);
-                sourceNode.addEdge(edge);
-                edgeList.add(edge);
-            }
-        }
+        edgeList.putAll(NetworkController.generateRandomEdges(sourceNodeList, destinationNodeList, this));
+        //TODO TESTING
+        //a.putAll(NetworkController.generateRandomEdges(sourceNodeList, destinationNodeList, this));
+        //b.putAll(NetworkController.generateRandomEdges(sourceNodeList, destinationNodeList, this));
     }
 
+    /**
+     * Add the dimension to the list that stores them
+     * @param a input
+     * @param b hidden groups
+     * @param c hiddens
+     * @param d outputs
+     */
     public void addToDimensions(int a, int b, int c, int d) {
         dimensions.add(a);
         dimensions.add(b);
@@ -86,12 +105,14 @@ public class Network {
         dimensions.add(d);
     }
 
+    /**
+     * Reads and calculates different inputs and output signals
+     */
     public void propagateSignal() {
         initStage();
         propagateStage();
         updateStage();
     }
-
     private void updateStage() {
 
         for (List<Node> hiddenNodeGroup : hiddenNodeGroupList) {
@@ -109,7 +130,6 @@ public class Network {
             outputNode.updateColor();
         }
     }
-
     private void propagateStage() {
         for (Node inputNode : inputNodeGroup) {
             if (inputNode.getStrength() > 0) {
@@ -138,7 +158,6 @@ public class Network {
             }
         }
     }
-
     private void initStage() {
         Random random = new Random();
         for (Node inputNode : inputNodeGroup) {
@@ -199,11 +218,22 @@ public class Network {
         return outputNodeGroup;
     }
 
-    public List<Edge> getEdgeList() {
+    public HashMap<Integer, Edge> getEdgeList() {
         return edgeList;
     }
 
     public int getTotalAmountOfGroups() {
         return totalAmountOfGroups;
+    }
+
+    public int getActiveEdges(HashMap<Integer, Edge> in) {
+        int result = 0;
+        Set<Integer> keySet = in.keySet();
+        for (Integer i : keySet) {
+            if (in.get(i).getWeight() != 0) {
+                result++;
+            }
+        }
+        return result;
     }
 }

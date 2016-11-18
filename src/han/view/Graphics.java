@@ -15,17 +15,32 @@ public class Graphics {
     private int px;
     private int nodeSize;
 
+    /**
+     * Constructor for nodes
+     * @param x location x
+     * @param y location y
+     * @param color color of node
+     */
     public Graphics(int x, int y, Color color) {
         this.x = x;
         this.y = y;
         this.color = color;
     }
 
+    /**
+     * Constructor for edge
+     * @param color edge color
+     * @param lw edge line width
+     */
     public Graphics(Color color, int lw) {
         this.color = color;
         this.lw = lw;
     }
 
+    /**
+     * Tostring for nice rep of id/location
+     * @return location (x,y)
+     */
     public String locationToString() {
         return "(" + x + ", " + y + ")";
     }

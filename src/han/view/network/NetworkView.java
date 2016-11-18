@@ -1,5 +1,6 @@
 package han.view.network;
 
+import han.controller.game.NeuronSnake;
 import han.model.network.Edge;
 import han.model.network.Network;
 import han.model.network.Node;
@@ -19,43 +20,59 @@ import javafx.scene.text.Font;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
-import java.util.Random;
+import java.util.Set;
 
 /**
  * Created by han on 16-11-16.
  * Simple view to visualize network
  */
-public class NetworkView extends Application {
+public class NetworkView extends Application implements Runnable {
 
+    /**
+     * Class variables
+     */
     private static Network network;
     public static NumberFormat formatter = new DecimalFormat("#0.00");
 
-    public static final int CANVAS_WIDTH = 1366;
-    public static final int CANVAS_HEIGHT = 768;
+    /**
+     * Constants
+     */
+    public static final int CANVAS_WIDTH = 1600;
+    public static final int CANVAS_HEIGHT = 900;
     public static final int NODE_SIZE_MODIFIER = 2;
     public static final int X_STANDARD_OFFSET = 0;
     public static final int Y_STANDARD_OFFSET = 20;
     public static final int EFFECTIVE_WIDTH = CANVAS_WIDTH - (2 * X_STANDARD_OFFSET);
     public static final int EFFECTIVE_HEIGHT = CANVAS_HEIGHT - (2 * Y_STANDARD_OFFSET);
     public static final boolean DISPLAY_COORDINATES = false;
-    public static final boolean DISPLAY_STRENGTHS = false;
-    public static final boolean DISPLAY_WEIGHTS = false;
+    public static final boolean DISPLAY_STRENGTHS = true;
+    public static final boolean DISPLAY_WEIGHTS = true;
     public static final double MIN_ALPHA = 0.18;
     public static final int SPACE_BETWEEN_LINES = 12;
     public static final double FONT_SIZE = 9;
     public static final int FONT_LINE_WIDTH = 1;
     public static final double WEIGHT_DISTANCE_TO_NODE = 0.3;
 
+    public Canvas canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+
+    /**
+     * function that can get called to start up a new window with in it the network
+     * @param nw the network
+     */
     public static void startNetwork(Network nw) {
         network = nw;
         launch();
     }
 
+    /**
+     * Initialization of the network
+     * @param primaryStage
+     */
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Network");
         Group root = new Group();
-        Canvas canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+        //canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
 
         canvas.setFocusTraversable(true);
 
@@ -87,7 +104,11 @@ public class NetworkView extends Application {
         primaryStage.show();
     }
 
-    private void initNetwork(GraphicsContext gc) {
+    /**
+     * Draw the network
+     * @param gc context of the canvas in the main window
+     */
+    public void initNetwork(GraphicsContext gc) {
         gc.setStroke(Color.WHITE);
         gc.setLineWidth(1);
         gc.setFont(new Font(FONT_SIZE));
@@ -158,7 +179,8 @@ public class NetworkView extends Application {
             }
         }
 
-        for (int i = 0; i < network.getEdgeList().size(); i++) {
+        Set<Integer> keySet = network.getEdgeList().keySet();
+        for (Integer i : keySet) {
             Edge edge = network.getEdgeList().get(i);
             Node sourceNode = edge.getSourceNode();
             Node destinationNode = edge.getDestinationNode();
@@ -180,6 +202,15 @@ public class NetworkView extends Application {
                 }
             }
         }
+    }
+
+    @Override
+    public void run() {
+        startNetwork(NeuronSnake.getNetwork());
+    }
+
+    public Canvas getCanvas() {
+        return canvas;
     }
 }
 
