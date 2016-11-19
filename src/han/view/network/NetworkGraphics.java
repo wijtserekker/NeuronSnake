@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
  * Created by han on 16-11-16.
  * Simple location class
  */
-public class Graphics {
+public class NetworkGraphics {
     private int x;
     private int y;
     private Color color;
@@ -21,7 +21,7 @@ public class Graphics {
      * @param y location y
      * @param color color of node
      */
-    public Graphics(int x, int y, Color color) {
+    public NetworkGraphics(int x, int y, Color color) {
         this.x = x;
         this.y = y;
         this.color = color;
@@ -32,7 +32,7 @@ public class Graphics {
      * @param color edge color
      * @param lw edge line width
      */
-    public Graphics(Color color, int lw) {
+    public NetworkGraphics(Color color, int lw) {
         this.color = color;
         this.lw = lw;
     }

@@ -44,8 +44,6 @@ public class GameView extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        System.out.println(NeuronSnake.getBoard());
-
         primaryStage.setTitle("Network");
 
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
@@ -61,7 +59,6 @@ public class GameView extends Application {
     }
 
     public void initGame(GraphicsContext gc) {
-        System.out.println("bi");
         gc.setFill((Color.BLACK));
         gc.fillRect(0, 0, canvasWidth, canvasHeight);
         Color color = new Color(.15, .15, .15, 1);
@@ -72,12 +69,12 @@ public class GameView extends Application {
                 gc.strokeRect(i * GRID_SIZE, j * GRID_SIZE, GRID_SIZE, GRID_SIZE);
             }
         }
-        gc.setFill(Color.WHITE);
+
         for (Segment segment : board.getSnake().getSegments()) {
+            gc.setFill(segment.getGraphics().getColor());
             gc.fillRect(segment.getLocation().getX() * GRID_SIZE, segment.getLocation().getY() * GRID_SIZE,
                     GRID_SIZE, GRID_SIZE);
         }
-        System.out.println("ei");
     }
 
     public Board getBoard() {

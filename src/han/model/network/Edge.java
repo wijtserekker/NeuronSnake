@@ -1,6 +1,6 @@
 package han.model.network;
 
-import han.view.network.Graphics;
+import han.view.network.NetworkGraphics;
 import han.view.network.NetworkView;
 import javafx.scene.paint.Color;
 
@@ -18,7 +18,7 @@ public class Edge {
     private Node sourceNode;
     private Node destinationNode;
     private double weight;
-    private Graphics graphics;
+    private NetworkGraphics graphics;
     public static NumberFormat formatter = new DecimalFormat("#0.00");
 
     /**
@@ -29,7 +29,7 @@ public class Edge {
     public static final double CHANCE_TO_GET_WEIGHT = 0.6;
     public static final double WEIGHT_CHANCE_EDGES_MODIFIER = 1.2;
     public static final double WEIGHT_CHANCE_PEERS_MODIFIER = 2;
-    public static final double WEIGHT_CHANCE_DESTINATIONS_MODIFIER = 4;
+    public static final double WEIGHT_CHANCE_DESTINATIONS_MODIFIER = 2;
 
     /**
      * Updates the color and alpha of the edge
@@ -65,7 +65,7 @@ public class Edge {
         this.destinationNode = node;
     }
 
-    public Graphics getGraphics() {
+    public NetworkGraphics getGraphics() {
         return graphics;
     }
 
@@ -77,7 +77,7 @@ public class Edge {
         this.weight = weight;
     }
 
-    public void setGraphics(Graphics graphics) {
+    public void setGraphics(NetworkGraphics graphics) {
         this.graphics = graphics;
     }
 

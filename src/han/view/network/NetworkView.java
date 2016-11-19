@@ -1,6 +1,5 @@
 package han.view.network;
 
-import han.controller.game.Clock;
 import han.controller.game.NeuronSnake;
 import han.model.network.Edge;
 import han.model.network.Network;
@@ -19,7 +18,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.text.Font;
-import javafx.stage.WindowEvent;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -73,8 +71,6 @@ public class NetworkView extends Application {
     public void start(Stage primaryStage) {
 
         gameView.getBoard().getSnake().setNetwork(network);
-
-        this.network = NeuronSnake.getNetwork();
 
         primaryStage.setTitle("Network");
 
@@ -142,7 +138,7 @@ public class NetworkView extends Application {
         int inputNodeYOffset = EFFECTIVE_HEIGHT / (network.getInputNodeGroup().size() + 1);
         for (int i = 0; i < network.getInputNodeGroup().size(); i++) {
             Node inputNode = network.getInputNodeGroup().get(i);
-            Graphics graphics = inputNode.getGraphics();
+            NetworkGraphics graphics = inputNode.getGraphics();
             gc.setFill(graphics.getColor());
             int inputNodeSize = inputNodeYOffset / NODE_SIZE_MODIFIER;
             inputNode.getGraphics().setNodeSize(inputNodeSize);
@@ -164,7 +160,7 @@ public class NetworkView extends Application {
             int hiddenNodeYOffset = EFFECTIVE_HEIGHT / (hiddenNodeGroup.size() + 1);
             for (int j = 0; j < hiddenNodeGroup.size(); j++) {
                 Node hiddenNode = hiddenNodeGroup.get(j);
-                Graphics graphics = hiddenNode.getGraphics();
+                NetworkGraphics graphics = hiddenNode.getGraphics();
                 gc.setFill(graphics.getColor());
                 int hiddenNodeSize = hiddenNodeYOffset / NODE_SIZE_MODIFIER;
                 hiddenNode.getGraphics().setNodeSize(hiddenNodeSize);
@@ -186,7 +182,7 @@ public class NetworkView extends Application {
         int outputNodeYOffset = EFFECTIVE_HEIGHT / (network.getOutputNodeGroup().size() + 1);
         for (int i = 0; i < network.getOutputNodeGroup().size(); i++) {
             Node outputNode = network.getOutputNodeGroup().get(i);
-            Graphics graphics = outputNode.getGraphics();
+            NetworkGraphics graphics = outputNode.getGraphics();
             gc.setFill(graphics.getColor());
             int outputNodeSize = outputNodeYOffset / NODE_SIZE_MODIFIER;
             outputNode.getGraphics().setNodeSize(outputNodeSize);
@@ -208,7 +204,7 @@ public class NetworkView extends Application {
             Edge edge = network.getEdgeList().get(i);
             Node sourceNode = edge.getSourceNode();
             Node destinationNode = edge.getDestinationNode();
-            Graphics graphics = edge.getGraphics();
+            NetworkGraphics graphics = edge.getGraphics();
             gc.setStroke(graphics.getColor());
             gc.setLineWidth(graphics.getLw());
             int sx = sourceNode.getGraphics().getPx() + (int)(0.5 * sourceNode.getGraphics().getNodeSize());

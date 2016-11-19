@@ -1,5 +1,8 @@
 package han.model.game;
 
+import han.view.game.GameGraphics;
+import javafx.scene.paint.Color;
+
 /**
  * Created by han on 18-11-16.
  * Part of the snake
@@ -8,9 +11,11 @@ public class Segment {
 
     private Snake.Direction direction;
     private Location location;
+    private GameGraphics graphics;
 
-    public Segment() {
+    public Segment(Color color) {
         this.direction = Snake.Direction.RIGHT;
+        this.graphics = new GameGraphics(color);
     }
 
     public Snake.Direction getDirection() {
@@ -27,5 +32,9 @@ public class Segment {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public GameGraphics getGraphics() {
+        return graphics;
     }
 }

@@ -3,7 +3,7 @@ package han.controller.network;
 import han.model.network.Edge;
 import han.model.network.Network;
 import han.model.network.Node;
-import han.view.network.Graphics;
+import han.view.network.NetworkGraphics;
 import han.view.network.NetworkView;
 import javafx.scene.paint.Color;
 
@@ -59,7 +59,7 @@ public class NetworkController {
                     edge.setWeight(0);
                     color = new Color(0, 0, 0, 0);
                 }
-                edge.setGraphics(new Graphics(color, 2));
+                edge.setGraphics(new NetworkGraphics(color, 2));
                 int sx = sourceNode.getGraphics().getX();
                 int sy = sourceNode.getGraphics().getY();
                 int dx = destinationNode.getGraphics().getX();

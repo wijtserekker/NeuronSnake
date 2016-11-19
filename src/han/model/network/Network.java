@@ -236,4 +236,8 @@ public class Network {
         }
         return result;
     }
+
+    public void setInputNodeGroup(List<Node> inputNodeGroup) {
+        this.inputNodeGroup = inputNodeGroup;
+    }
 }
