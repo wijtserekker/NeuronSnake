@@ -3,9 +3,8 @@ package han.controller.network;
 import han.model.network.Edge;
 import han.model.network.Network;
 import han.model.network.Node;
-import han.view.Graphics;
+import han.view.network.Graphics;
 import han.view.network.NetworkView;
-import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.paint.Color;
 
 import java.util.*;
@@ -18,7 +17,7 @@ import static han.model.network.Edge.*;
  */
 public class NetworkController {
 
-    private List<Network> networkList = new ArrayList<>();
+    public static final double CHANCE_OF_MUTATION = 0.1;
 
     public static HashMap<Integer, Edge> generateRandomEdges(List<Node> sourceNodeList, List<Node> destinationNodeList,
                                                              Network network) {
@@ -75,16 +74,32 @@ public class NetworkController {
 
     public static HashMap<Integer, Edge> combineEdges(HashMap<Integer, Edge> a, HashMap<Integer, Edge> b) {
         HashMap<Integer, Edge> result = new HashMap<>();
+        Random random = new Random();
         double r;
         Set<Integer> keySet = a.keySet();
         for (Integer i : keySet) {
-            Random random = new Random();
             r = random.nextDouble();
             if (r < 0.5) {
                 result.put(i, a.get(i));
             } else {
                 result.put(i, b.get(i));
             }
+        }
+        return result;
+    }
+
+    public static HashMap<Integer, Edge> mutateEdges(HashMap<Integer, Edge> a) {
+        HashMap<Integer, Edge> result = a;
+        Random random = new Random();
+        double r;
+        Set<Integer> keySet = a.keySet();
+        for (Integer i : keySet) {
+            r = random.nextDouble();
+            if (r < CHANCE_OF_MUTATION) {
+                double weight = random.nextDouble();
+                a.get(i).setWeight(weight);
+            }
+            result.put(i, a.get(i));
         }
         return result;
     }

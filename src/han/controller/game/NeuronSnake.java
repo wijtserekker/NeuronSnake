@@ -21,12 +21,8 @@ public class NeuronSnake {
         //TODO do stuff to init
 
 
-        Thread nwThread = new Thread(nwView);
-        nwThread.start();
-
-        Thread clockThread = new Thread(new Clock());
-        clockThread.start();
-
+        Thread nwThread = new Thread(new NetworkView());
+        nwThread.start(); //(networkview starts the clock for ez reasons)
 
 
         //TODO TESTING

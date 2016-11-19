@@ -1,12 +1,13 @@
 package han.view.network;
 
+import han.controller.game.Clock;
 import han.controller.game.NeuronSnake;
 import han.model.network.Edge;
 import han.model.network.Network;
 import han.model.network.Node;
-import han.view.Graphics;
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -14,8 +15,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.text.Font;
+import javafx.stage.WindowEvent;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -33,27 +36,28 @@ public class NetworkView extends Application implements Runnable {
      */
     private static Network network;
     public static NumberFormat formatter = new DecimalFormat("#0.00");
+    private static Clock clock;
 
     /**
      * Constants
      */
-    public static final int CANVAS_WIDTH = 1600;
-    public static final int CANVAS_HEIGHT = 900;
+    public static final int CANVAS_WIDTH = 400;
+    public static final int CANVAS_HEIGHT = 250;
     public static final int NODE_SIZE_MODIFIER = 2;
     public static final int X_STANDARD_OFFSET = 0;
     public static final int Y_STANDARD_OFFSET = 20;
     public static final int EFFECTIVE_WIDTH = CANVAS_WIDTH - (2 * X_STANDARD_OFFSET);
     public static final int EFFECTIVE_HEIGHT = CANVAS_HEIGHT - (2 * Y_STANDARD_OFFSET);
     public static final boolean DISPLAY_COORDINATES = false;
-    public static final boolean DISPLAY_STRENGTHS = true;
-    public static final boolean DISPLAY_WEIGHTS = true;
+    public static final boolean DISPLAY_STRENGTHS = false;
+    public static final boolean DISPLAY_WEIGHTS = false;
     public static final double MIN_ALPHA = 0.18;
     public static final int SPACE_BETWEEN_LINES = 12;
     public static final double FONT_SIZE = 9;
     public static final int FONT_LINE_WIDTH = 1;
     public static final double WEIGHT_DISTANCE_TO_NODE = 0.3;
-
-    public Canvas canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+    public static final int STAGE_OFFSET = 100;
+    private Canvas canvas;
 
     /**
      * function that can get called to start up a new window with in it the network
@@ -64,21 +68,44 @@ public class NetworkView extends Application implements Runnable {
         launch();
     }
 
+    public void setNetwork(Network network) {
+        NetworkView.network = network;
+    }
+
+    public Network getNetwork() {
+        return network;
+    }
+
     /**
      * Initialization of the network
      * @param primaryStage
      */
     @Override
     public void start(Stage primaryStage) {
+
+
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent windowEvent) {
+                clock.setRunning(false);
+            }
+        });
+
         primaryStage.setTitle("Network");
+
+        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+
+        primaryStage.setX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() -
+                (CANVAS_WIDTH + STAGE_OFFSET));
+        primaryStage.setY(primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() -
+                (CANVAS_HEIGHT + (1)));
+
         Group root = new Group();
-        //canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+        canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
 
         canvas.setFocusTraversable(true);
 
-        canvas.getGraphicsContext2D().setFill(Color.BLACK);
-        canvas.getGraphicsContext2D().fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
+        //TODO
         canvas.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
@@ -102,6 +129,11 @@ public class NetworkView extends Application implements Runnable {
         root.getChildren().add(canvas);
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
+
+        clock = new Clock(this);
+
+        Thread clockThread = new Thread(clock);
+        clockThread.start();
     }
 
     /**
@@ -109,6 +141,8 @@ public class NetworkView extends Application implements Runnable {
      * @param gc context of the canvas in the main window
      */
     public void initNetwork(GraphicsContext gc) {
+        gc.setFill((Color.BLACK));
+        gc.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         gc.setStroke(Color.WHITE);
         gc.setLineWidth(1);
         gc.setFont(new Font(FONT_SIZE));

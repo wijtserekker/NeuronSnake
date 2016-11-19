@@ -1,6 +1,6 @@
 package han.model.network;
 
-import han.view.Graphics;
+import han.view.network.Graphics;
 import han.view.network.NetworkView;
 import javafx.scene.paint.Color;
 

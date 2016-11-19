@@ -9,6 +9,7 @@ import java.util.Date;
 import static han.view.network.NetworkView.CANVAS_HEIGHT;
 import static han.view.network.NetworkView.CANVAS_WIDTH;
 
+
 /**
  * Created by han on 18-11-16.
  */
@@ -16,6 +17,11 @@ public class Clock implements Runnable {
 
     public static final int TICK_LENGTH = 2000; //40 ticks/s
     private boolean running = true;
+    private NetworkView networkView;
+
+    public Clock(NetworkView networkView) {
+        this.networkView = networkView;
+    }
 
     @Override
     public void run() {
@@ -28,12 +34,13 @@ public class Clock implements Runnable {
     }
 
     private void tick() {
-        NeuronSnake.setNetwork(new Network(NeuronSnake.getNetwork().getAmountOfInputNodes(),
-                NeuronSnake.getNetwork().getAmountOfHiddenNodeGroups(),
-                NeuronSnake.getNetwork().getAmountOfHiddenNodes(), NeuronSnake.getNetwork().getAmountOfOutputNodes()));
-        NeuronSnake.getNwView().getCanvas().getGraphicsContext2D().setFill(Color.BLACK);
-        NeuronSnake.getNwView().getCanvas().getGraphicsContext2D().fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-        NeuronSnake.getNwView().initNetwork(NeuronSnake.getNwView().getCanvas().getGraphicsContext2D());
+        networkView.setNetwork(new Network(networkView.getNetwork().getAmountOfInputNodes(),
+                networkView.getNetwork().getAmountOfHiddenNodeGroups(),
+                networkView.getNetwork().getAmountOfHiddenNodes(),
+                networkView.getNetwork().getAmountOfOutputNodes()));
+        networkView.getCanvas().getGraphicsContext2D().setFill(Color.BLACK);
+        networkView.getCanvas().getGraphicsContext2D().fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        networkView.initNetwork(networkView.getCanvas().getGraphicsContext2D());
     }
 
 
@@ -50,5 +57,9 @@ public class Clock implements Runnable {
             System.out.println("Can't keep up!");
             running = false;
         }
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
     }
 }

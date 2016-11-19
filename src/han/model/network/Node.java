@@ -1,10 +1,8 @@
 package han.model.network;
 
-import han.model.network.Edge;
-import han.view.Graphics;
+import han.view.network.Graphics;
 import han.view.network.NetworkView;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 import java.util.ArrayList;
 import java.util.List;
