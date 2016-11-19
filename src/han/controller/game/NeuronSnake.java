@@ -14,8 +14,8 @@ import javafx.stage.Stage;
  */
 public class NeuronSnake {
 
-    private static Network network = new Network(15, 1, 15, 2);
-    private static Board board = new Board();
+//    private static Network network = new Network(15, 1, 15, 2);
+//    private static Board board = new Board();
 
     /**
      * Main method run when program is started
@@ -59,20 +59,20 @@ public class NeuronSnake {
         //Network network = new Network(15, 1, 15, 2);
         //NetworkView.startNetwork(network);
     }
-
-    public static Network getNetwork() {
-        return network;
-    }
-
-    public static void setNetwork(Network network) {
-        NeuronSnake.network = network;
-    }
-
-    public static Board getBoard() {
-        return board;
-    }
-
-    public static void setBoard(Board board) {
-        NeuronSnake.board = board;
-    }
+//
+//    public static Network getNetwork() {
+//        return network;
+//    }
+//
+//    public static void setNetwork(Network network) {
+//        NeuronSnake.network = network;
+//    }
+//
+//    public static Board getBoard() {
+//        return board;
+//    }
+//
+//    public static void setBoard(Board board) {
+//        NeuronSnake.board = board;
+//    }
 }

@@ -1,6 +1,6 @@
 package han.model.network;
 
-import han.view.network.Graphics;
+import han.view.network.NetworkGraphics;
 import han.view.network.NetworkView;
 import javafx.scene.paint.Color;
 
@@ -43,7 +43,7 @@ public class Node {
      * Private variables
      */
     private List<Edge> edgeList = new ArrayList<>();
-    private Graphics graphics;
+    private NetworkGraphics graphics;
     private double strength;
     private TypeOfNode typeOfNode;
     private double inputSignals;
@@ -59,13 +59,13 @@ public class Node {
         this.typeOfNode = typeOfNode;
         this.inputSignals = 0;
         if (typeOfNode.equals(TypeOfNode.INPUT)) {
-            this.graphics = new Graphics(x, y, new Color(INPUT_R, INPUT_G, INPUT_B,
+            this.graphics = new NetworkGraphics(x, y, new Color(INPUT_R, INPUT_G, INPUT_B,
                     NetworkView.MIN_ALPHA + ((1 - NetworkView.MIN_ALPHA) * strength)));
         } else if (typeOfNode.equals(TypeOfNode.HIDDEN)) {
-            this.graphics = new Graphics(x, y, new Color(HIDDEN_R, HIDDEN_G, HIDDEN_B,
+            this.graphics = new NetworkGraphics(x, y, new Color(HIDDEN_R, HIDDEN_G, HIDDEN_B,
                     NetworkView.MIN_ALPHA + ((1 - NetworkView.MIN_ALPHA) * strength)));
         } else if (typeOfNode.equals(TypeOfNode.OUTPUT)) {
-            this.graphics = new Graphics(x, y, new Color(OUTPUT_R, OUTPUT_G, OUTPUT_B,
+            this.graphics = new NetworkGraphics(x, y, new Color(OUTPUT_R, OUTPUT_G, OUTPUT_B,
                     NetworkView.MIN_ALPHA + ((1 - NetworkView.MIN_ALPHA) * strength)));
         }
 
@@ -125,7 +125,7 @@ public class Node {
         this.inputSignals = inputSignals;
     }
 
-    public Graphics getGraphics() {
+    public NetworkGraphics getGraphics() {
         return graphics;
     }
 
