@@ -1,7 +1,6 @@
 package wijtse.model.game;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import wijtse.model.brain.GeneticAlgorithm;
 import wijtse.view.BoardView;
 
@@ -45,6 +44,13 @@ public class Board {
         for (int i = 0; i < maxPopulation; i++) {
             population.add(new Snake(this, width / 4 * 3, height / 2, geneticAlgorithm.getRandomDNA()));
         }
+
+        for (int i = 0; i < maxFood; i++) {
+            ArrayList<Integer> foodLocation = new ArrayList<>(2);
+            foodLocation.add((int) (Math.random() * width));
+            foodLocation.add((int) (Math.random() * height));
+            foodLocations.add(foodLocation);
+        }
     }
 
     public void update() {
@@ -70,7 +76,7 @@ public class Board {
         boolean result = false;
         int foodNr = 0;
         for (ArrayList<Integer> foodLocation : foodLocations) {
-            if (foodLocation.get(1) == x && foodLocation.get(2) == y) {
+            if (foodLocation.get(0) == x && foodLocation.get(1) == y) {
                 result = true;
                 break;
             }
@@ -88,17 +94,26 @@ public class Board {
         boolean result = false;
         for (ArrayList<Integer> foodLocation : foodLocations) {
             result = foodLocation.get(0) == x && foodLocation.get(1) == y;
+            break;
         }
         return result;
     }
 
     public void draw(GraphicsContext graphics) {
+        //Draw background
         graphics.setFill(BoardView.BACKGROUND_COLOR);
         graphics.fillRect(0, 0, width * BoardView.BOARD_TILE_SIZE, height * BoardView.BOARD_TILE_SIZE);
+
+        //Draw snakes
         for (Snake snake : population) {
             snake.draw(graphics);
         }
-        //TODO draw food
+
+        //Draw food
+        graphics.setFill(BoardView.FOOD_COLOR);
+        for (ArrayList<Integer> foodLocation : foodLocations) {
+            graphics.fillOval(foodLocation.get(0) * BoardView.BOARD_TILE_SIZE, foodLocation.get(1) * BoardView.BOARD_TILE_SIZE, BoardView.BOARD_TILE_SIZE, BoardView.BOARD_TILE_SIZE);
+        }
     }
 
     public int getWidth() {

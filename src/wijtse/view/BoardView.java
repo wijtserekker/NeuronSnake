@@ -10,6 +10,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import wijtse.controller.Clock;
+import wijtse.model.game.Board;
 
 /**
  * Created by wijtse on 18-11-16.
@@ -22,9 +24,9 @@ public class BoardView extends Application {
     public static final Color FOOD_COLOR = Color.rgb(3, 119, 81);
     public static final Color BACKGROUND_COLOR = Color.BLACK;
 
-    private static final int BOARD_WIDTH = 1;
-    private static final int BOARD_HEIGHT = 1;
-    public static final int BOARD_TILE_SIZE = 1;
+    private static final int BOARD_WIDTH = 30;
+    private static final int BOARD_HEIGHT = 10;
+    public static final int BOARD_TILE_SIZE = 20;
 
     private Group root;
     private StackPane canvasHolder;
@@ -49,9 +51,13 @@ public class BoardView extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
+        Board board = new Board(BOARD_WIDTH, BOARD_HEIGHT, 1, 12, 0.01);
+        Clock clock = new Clock(board, canvasGraphics);
+        clock.start();
+
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent we) {
-
+                clock.pleaseStop();
             }
         });
     }

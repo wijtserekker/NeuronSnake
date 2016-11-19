@@ -54,4 +54,7 @@ public class Clock extends Thread{
         }
     }
 
+    public void pleaseStop() {
+        running = false;
+    }
 }
