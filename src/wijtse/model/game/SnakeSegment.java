@@ -9,7 +9,7 @@ import wijtse.view.BoardView;
 public class SnakeSegment {
 
     public enum Direction {
-        LEFT, RIGTH, UP, DOWN
+        LEFT, RIGHT, UP, DOWN
     }
 
     private int x;
@@ -27,7 +27,7 @@ public class SnakeSegment {
             case LEFT:
                 x--;
                 break;
-            case RIGTH:
+            case RIGHT:
                 x++;
                 break;
             case UP:

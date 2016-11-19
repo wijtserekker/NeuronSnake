@@ -1,11 +1,15 @@
 package wijtse.view;
 
+import han.model.network.Network;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -25,7 +29,7 @@ public class BoardView extends Application {
     public static final Color BACKGROUND_COLOR = Color.BLACK;
 
     private static final int BOARD_WIDTH = 30;
-    private static final int BOARD_HEIGHT = 10;
+    private static final int BOARD_HEIGHT = 30;
     public static final int BOARD_TILE_SIZE = 20;
 
     private Group root;
@@ -51,9 +55,49 @@ public class BoardView extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
-        Board board = new Board(BOARD_WIDTH, BOARD_HEIGHT, 1, 12, 0.01);
+        Board board = new Board(BOARD_WIDTH, BOARD_HEIGHT, 7, 12, 0.3);
         Clock clock = new Clock(board, canvasGraphics);
         clock.start();
+
+
+        canvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getEventType() == MouseEvent.MOUSE_CLICKED) {
+                    double mouseX = event.getX();
+                    double mouseY = event.getY();
+
+                    int x = -1;
+                    int y = -1;
+
+                    for (int testX = 0; testX < BOARD_WIDTH; testX++) {
+                        if (mouseX > testX * BOARD_TILE_SIZE && mouseX < testX * BOARD_TILE_SIZE + BOARD_TILE_SIZE) {
+                            for (int testY = 0; testY < BOARD_HEIGHT; testY++) {
+                                if (mouseY > testY * BOARD_TILE_SIZE && mouseY < testY * BOARD_TILE_SIZE + BOARD_TILE_SIZE) {
+                                    x = testX;
+                                    y = testY;
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+
+                    if (x != -1) {
+                        clock.openBrainViewOfSnake(x, y);
+                    }
+                }
+            }
+        });
+        canvas.setFocusTraversable(true);
+        canvas.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (keyEvent.getCode().equals(KeyCode.SPACE)) {
+                    clock.pauseOrResume();
+                }
+            }
+        });
 
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent we) {

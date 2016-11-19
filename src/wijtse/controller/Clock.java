@@ -10,16 +10,20 @@ import java.util.Date;
  */
 public class Clock extends Thread{
 
-    public static final int TICKS_PER_SECOND = 1;
+    public static final int TICKS_PER_SECOND = 5;
 
     private int tickLength;
     private boolean running;
+    private boolean pause;
     private Board board;
     private GraphicsContext graphics;
+
+    private Object pauseMonitor = new Object();
 
     public Clock(Board board, GraphicsContext graphics) {
         tickLength = 1000 / TICKS_PER_SECOND;
         running = true;
+        pause = false;
 
         this.board = board;
         this.graphics = graphics;
@@ -29,6 +33,9 @@ public class Clock extends Thread{
     public void run() {
         long startTime;
         while (running) {
+            if (pause) {
+                waitForResume();
+            }
             startTime = new Date().getTime();
             tick();
             waitForNextTick(startTime);
@@ -54,7 +61,32 @@ public class Clock extends Thread{
         }
     }
 
+    private void waitForResume() {
+        synchronized (pauseMonitor) {
+            try {
+                pauseMonitor.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void pauseOrResume() {
+        if (pause) {
+            pause = false;
+            synchronized (pauseMonitor) {
+                pauseMonitor.notify();
+            }
+        } else {
+            pause = true;
+        }
+    }
+
     public void pleaseStop() {
         running = false;
+    }
+
+    public void openBrainViewOfSnake(int x, int y) {
+        board.openBrainViewOfSnake(x, y);
     }
 }

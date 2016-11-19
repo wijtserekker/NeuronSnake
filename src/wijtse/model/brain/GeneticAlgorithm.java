@@ -7,6 +7,8 @@ import java.util.ArrayList;
  */
 public class GeneticAlgorithm {
 
+    private static final double MUTATION_RATE = 0.1;
+
     private int dnaSize;
 
     public GeneticAlgorithm(int dnaSize) {
@@ -26,7 +28,14 @@ public class GeneticAlgorithm {
     public ArrayList<Double> mutate(ArrayList<Double> dna) {
         ArrayList<Double> result = new ArrayList<>();
 
-        result = dna; //TODO implement real mutation
+        for (double allele : dna) {
+            if (Math.random() < MUTATION_RATE) {
+                //Mutate allele
+                result.add(Math.random()*8-4);
+            } else {
+                result.add(allele);
+            }
+        }
 
         return result;
     }
@@ -34,7 +43,9 @@ public class GeneticAlgorithm {
     public ArrayList<Double> breed(ArrayList<Double> dnaParentOne, ArrayList<Double> dnaParentTwo) {
         ArrayList<Double> result = new ArrayList<>();
 
-        result = dnaParentOne; //TODO implement real breeding
+        for (int i = 0; i < dnaSize; i++) {
+            result.add(Math.random() > 0.5 ? dnaParentOne.get(i) : dnaParentTwo.get(i));
+        }
 
         return result;
     }

@@ -16,8 +16,11 @@ public class Snake {
 
     public static final int VIEW_DISTANCE = 5;
     public static final int INIT_LENGTH = 3;
+    public static final int MAX_HEALTH = 100;
 
+    private boolean alive;
     private int age;
+    private int health;
     private ArrayList<Double> dna;
     private Brain brain;
     private ArrayList<SnakeSegment> segments;
@@ -25,7 +28,9 @@ public class Snake {
     private BrainView brainView;
 
     public Snake(Board board, int startX, int startY, ArrayList<Double> dna) {
+        this.alive = true;
         this.age = 0;
+        this.health = MAX_HEALTH;
         this.dna = dna;
         this.brain = new Brain(Board.INPUT_NEURONS, Board.OUTPUT_NEURONS, Board.HIDDEN_LAYERS, Board.NEURONS_PER_HIDDEN_LAYER, dna);
         this.segments = new ArrayList<>();
@@ -33,50 +38,58 @@ public class Snake {
             segments.add(new SnakeSegment(startX + i, startY, SnakeSegment.Direction.LEFT));
         }
         this.board = board;
-
-        System.out.println("hi");
-        //TODO LELIJK
-        brainView = new BrainView(brain);
-        Platform.runLater(new Runnable() {
-            public void run() {
-                try {
-                    brainView.start(new Stage());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     public void move() {
-        age++;
+        if (alive) {
+            age++;
+            health--;
 
-        //Move all the segments forward
-        for (SnakeSegment segment : segments) {
-            segment.move();
-        }
-        SnakeSegment.Direction lastSegmentDirection = segments.get(segments.size() - 1).getDirection();
-        //Set the direction of a segment to the direction of the segment in front of it.
-        for (int i = segments.size() - 1; i > 0; i--) {
-            segments.get(i).setDirection(segments.get(i - 1).getDirection());
-        }
+            //Move all the segments forward
+            for (SnakeSegment segment : segments) {
+                segment.move();
+            }
+            SnakeSegment.Direction lastSegmentDirection = segments.get(segments.size() - 1).getDirection();
+            //Set the direction of a segment to the direction of the segment in front of it.
+            for (int i = segments.size() - 1; i > 0; i--) {
+                segments.get(i).setDirection(segments.get(i - 1).getDirection());
+            }
 
-        //Eat food with the head (first segment)
-        if (board.eatFood(segments.get(0).getX(), segments.get(0).getY())) {
-            switch (lastSegmentDirection) {
-                case LEFT:
-                    segments.add(new SnakeSegment(segments.get(segments.size()-1).getX() + 1, segments.get(segments.size()-1).getY(), lastSegmentDirection));
-                    break;
-                case RIGTH:
-                    segments.add(new SnakeSegment(segments.get(segments.size()-1).getX() - 1, segments.get(segments.size()-1).getY(), lastSegmentDirection));
-                    break;
-                case UP:
-                    segments.add(new SnakeSegment(segments.get(segments.size()-1).getX(), segments.get(segments.size()-1).getY() + 1, lastSegmentDirection));
-                    break;
-                case DOWN:
-                    segments.add(new SnakeSegment(segments.get(segments.size()-1).getX(), segments.get(segments.size()-1).getY() - 1, lastSegmentDirection));
-                    break;
+            //Eat food with the head (first segment)
+            if (board.eatFood(segments.get(0).getX(), segments.get(0).getY())) {
+                //Add a segment at the end of the tail
+                switch (lastSegmentDirection) {
+                    case LEFT:
+                        segments.add(new SnakeSegment(segments.get(segments.size() - 1).getX() + 1, segments.get(segments.size() - 1).getY(), lastSegmentDirection));
+                        break;
+                    case RIGHT:
+                        segments.add(new SnakeSegment(segments.get(segments.size() - 1).getX() - 1, segments.get(segments.size() - 1).getY(), lastSegmentDirection));
+                        break;
+                    case UP:
+                        segments.add(new SnakeSegment(segments.get(segments.size() - 1).getX(), segments.get(segments.size() - 1).getY() + 1, lastSegmentDirection));
+                        break;
+                    case DOWN:
+                        segments.add(new SnakeSegment(segments.get(segments.size() - 1).getX(), segments.get(segments.size() - 1).getY() - 1, lastSegmentDirection));
+                        break;
 
+                }
+                //Refresh the snake's health
+                health = MAX_HEALTH;
+            }
+
+            //Check if the snake died
+            if (health <= 0) {
+                alive = false;
+            } else if (segments.get(0).getX() < 0 || segments.get(0).getX() >= board.getWidth() ||
+                    segments.get(0).getY() < 0 || segments.get(0).getY() >= board.getHeight()) {
+                alive = false;
+            } else {
+                for (int i = 1; i < segments.size(); i++) {
+                    if (segments.get(0).getX() == segments.get(i).getX() && segments.get(0).getY() == segments.get(i).getY()) {
+                        alive = false;
+                        break;
+                    }
+                }
             }
         }
     }
@@ -88,13 +101,16 @@ public class Snake {
         } else if (decision.get(1) > 0.5 && decision.get(0) < 0.5) {
             turnLeft();
         }
-        brainView.draw(brain); //TODO LELIJK
+
+        if (brainView != null) {
+            brainView.draw(brain);
+        }
     }
 
     private void turnRight() {
         switch (segments.get(0).getDirection()) {
             case UP:
-                segments.get(0).setDirection(SnakeSegment.Direction.RIGTH);
+                segments.get(0).setDirection(SnakeSegment.Direction.RIGHT);
                 break;
             case DOWN:
                 segments.get(0).setDirection(SnakeSegment.Direction.LEFT);
@@ -102,7 +118,7 @@ public class Snake {
             case LEFT:
                 segments.get(0).setDirection(SnakeSegment.Direction.UP);
                 break;
-            case RIGTH:
+            case RIGHT:
                 segments.get(0).setDirection(SnakeSegment.Direction.DOWN);
                 break;
         }
@@ -114,12 +130,12 @@ public class Snake {
                 segments.get(0).setDirection(SnakeSegment.Direction.LEFT);
                 break;
             case DOWN:
-                segments.get(0).setDirection(SnakeSegment.Direction.RIGTH);
+                segments.get(0).setDirection(SnakeSegment.Direction.RIGHT);
                 break;
             case LEFT:
                 segments.get(0).setDirection(SnakeSegment.Direction.DOWN);
                 break;
-            case RIGTH:
+            case RIGHT:
                 segments.get(0).setDirection(SnakeSegment.Direction.UP);
                 break;
         }
@@ -167,8 +183,33 @@ public class Snake {
             }
             result.add(neuronValue);
         }
-        System.out.println(result);
         return result;
+    }
+
+    public int getHeadX() {
+        return segments.get(0).getX();
+    }
+
+    public int getHeadY() {
+        return segments.get(0).getY();
+    }
+
+    public void openBrainView() {
+        brainView = new BrainView(brain);
+        Platform.runLater(new Runnable() {
+            public void run() {
+                try {
+                    brainView.start(new Stage());
+                    brainView.draw(brain);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public boolean isAlive() {
+        return alive;
     }
 
     public int getFitness() {

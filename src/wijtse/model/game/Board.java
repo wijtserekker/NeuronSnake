@@ -30,6 +30,7 @@ public class Board {
     private ArrayList<Snake> population;
 
     public Board(int width, int height, int maxPopulation, int maxFood, double foodSpawnRate) {
+
         this.width = width;
         this.height = height;
         this.maxPopulation = maxPopulation;
@@ -58,6 +59,14 @@ public class Board {
         for (Snake snake : population) {
             snake.adjustDirection();
             snake.move();
+        }
+
+        for (int i = population.size() - 1; i >= 0; i--) {
+            if (!population.get(i).isAlive()) {
+                population.remove(i);
+                ArrayList<Snake> bestSnakes = getTwoBestSnakes();
+                population.add(new Snake(this, width / 4 * 3, height / 2, geneticAlgorithm.mutate(geneticAlgorithm.breed(bestSnakes.get(0).getDna(), bestSnakes.get(1).getDna()))));
+            }
         }
     }
 
@@ -94,7 +103,9 @@ public class Board {
         boolean result = false;
         for (ArrayList<Integer> foodLocation : foodLocations) {
             result = foodLocation.get(0) == x && foodLocation.get(1) == y;
-            break;
+            if (result) {
+                break;
+            }
         }
         return result;
     }
@@ -103,6 +114,14 @@ public class Board {
         //Draw background
         graphics.setFill(BoardView.BACKGROUND_COLOR);
         graphics.fillRect(0, 0, width * BoardView.BOARD_TILE_SIZE, height * BoardView.BOARD_TILE_SIZE);
+
+//        graphics.setStroke(Color.GRAY); //Draw background grid
+//        for (int i = 1; i < width; i++) {
+//            graphics.strokeLine(i*BoardView.BOARD_TILE_SIZE, 0, i*BoardView.BOARD_TILE_SIZE, height*BoardView.BOARD_TILE_SIZE);
+//        }
+//        for (int i = 1; i < height; i++) {
+//            graphics.strokeLine(0, i*BoardView.BOARD_TILE_SIZE, width*BoardView.BOARD_TILE_SIZE, i*BoardView.BOARD_TILE_SIZE);
+//        }
 
         //Draw snakes
         for (Snake snake : population) {
@@ -116,11 +135,40 @@ public class Board {
         }
     }
 
+    public ArrayList<Snake> getTwoBestSnakes() {
+        ArrayList<Snake> result = new ArrayList<>();
+
+        ArrayList<Integer> highScores = new ArrayList<>(2);
+        highScores.add(-1);
+        highScores.add(-1);
+        for (Snake snake : population) {
+            if (snake.getFitness() > highScores.get(0)) {
+                highScores.add(0, snake.getFitness());
+                result.add(0, snake);
+            } else if (snake.getFitness() > highScores.get(1)) {
+                highScores.add(1, snake.getFitness());
+                result.add(1, snake);
+            }
+        }
+
+        return result;
+    }
+
     public int getWidth() {
         return width;
     }
 
     public int getHeight() {
         return height;
+    }
+
+    public void openBrainViewOfSnake(int x, int y) {
+        for (Snake snake : population) {
+            if (snake.getHeadX() == x && snake.getHeadY() == y) {
+                snake.openBrainView();
+                break;
+            }
+        }
+
     }
 }

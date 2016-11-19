@@ -73,4 +73,37 @@ public enum SnakeViewLine {
         return result;
     }
 
+    public String toString() {
+        String result = "";
+
+        switch (this) {
+            case RIGHT:
+                result = "RIGHT";
+                break;
+            case UP_RIGHT:
+                result = "UP_RIGHT";
+                break;
+            case UP:
+                result = "UP";
+                break;
+            case UP_LEFT:
+                result = "UP_LEFT";
+                break;
+            case LEFT:
+                result = "LEFT";
+                break;
+            case DOWN_LEFT:
+                result = "DOWN_LEFT";
+                break;
+            case DOWN:
+                result = "DOWN";
+                break;
+            case DOWN_RIGHT:
+                result = "DOWN_RIGHT";
+                break;
+        }
+
+        return result;
+    }
+
 }

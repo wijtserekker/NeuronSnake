@@ -21,7 +21,7 @@ public class SnakeView {
                 return DOWN_LIST;
             case LEFT:
                 return LEFT_LIST;
-            case RIGTH:
+            case RIGHT:
                 return RIGHT_LIST;
             default:
                 return new ArrayList<>();
