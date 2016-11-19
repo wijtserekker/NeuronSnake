@@ -5,6 +5,7 @@ import han.controller.game.NeuronSnake;
 import han.model.network.Edge;
 import han.model.network.Network;
 import han.model.network.Node;
+import han.view.game.GameView;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
@@ -29,14 +30,13 @@ import java.util.Set;
  * Created by han on 16-11-16.
  * Simple view to visualize network
  */
-public class NetworkView extends Application implements Runnable {
+public class NetworkView extends Application {
 
     /**
      * Class variables
      */
     private static Network network;
     public static NumberFormat formatter = new DecimalFormat("#0.00");
-    private static Clock clock;
 
     /**
      * Constants
@@ -57,23 +57,12 @@ public class NetworkView extends Application implements Runnable {
     public static final int FONT_LINE_WIDTH = 1;
     public static final double WEIGHT_DISTANCE_TO_NODE = 0.3;
     public static final int STAGE_OFFSET = 100;
+
     private Canvas canvas;
+    private GameView gameView;
 
-    /**
-     * function that can get called to start up a new window with in it the network
-     * @param nw the network
-     */
-    public static void startNetwork(Network nw) {
-        network = nw;
-        launch();
-    }
-
-    public void setNetwork(Network network) {
-        NetworkView.network = network;
-    }
-
-    public Network getNetwork() {
-        return network;
+    public NetworkView() {
+        this.network = new Network(15, 1, 15, 2);
     }
 
     /**
@@ -83,13 +72,9 @@ public class NetworkView extends Application implements Runnable {
     @Override
     public void start(Stage primaryStage) {
 
+        gameView.getBoard().getSnake().setNetwork(network);
 
-        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent windowEvent) {
-                clock.setRunning(false);
-            }
-        });
+        this.network = NeuronSnake.getNetwork();
 
         primaryStage.setTitle("Network");
 
@@ -98,7 +83,7 @@ public class NetworkView extends Application implements Runnable {
         primaryStage.setX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() -
                 (CANVAS_WIDTH + STAGE_OFFSET));
         primaryStage.setY(primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() -
-                (CANVAS_HEIGHT + (1)));
+                ((CANVAS_HEIGHT / 2) + (primaryScreenBounds.getHeight() / 2)));
 
         Group root = new Group();
         canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -117,6 +102,7 @@ public class NetworkView extends Application implements Runnable {
                 } else if (keyEvent.getCode().equals(KeyCode.SPACE)) {
                     network = new Network (network.getAmountOfInputNodes(), network.getAmountOfHiddenNodeGroups(),
                             network.getAmountOfHiddenNodes(), network.getAmountOfOutputNodes());
+                    gameView.getBoard().getSnake().setNetwork(network);
                     canvas.getGraphicsContext2D().setFill(Color.BLACK);
                     canvas.getGraphicsContext2D().fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
                     initNetwork(canvas.getGraphicsContext2D());
@@ -130,10 +116,14 @@ public class NetworkView extends Application implements Runnable {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
-        clock = new Clock(this);
+    }
 
-        Thread clockThread = new Thread(clock);
-        clockThread.start();
+    public void setNetwork(Network network) {
+        NetworkView.network = network;
+    }
+
+    public Network getNetwork() {
+        return network;
     }
 
     /**
@@ -238,13 +228,16 @@ public class NetworkView extends Application implements Runnable {
         }
     }
 
-    @Override
-    public void run() {
-        startNetwork(NeuronSnake.getNetwork());
-    }
-
     public Canvas getCanvas() {
         return canvas;
+    }
+
+    public GameView getGameView() {
+        return gameView;
+    }
+
+    public void setGameView(GameView gameView) {
+        this.gameView = gameView;
     }
 }
 

@@ -1,7 +1,12 @@
 package han.controller.game;
 
+import han.model.game.Board;
 import han.model.network.Network;
+import han.view.game.GameView;
 import han.view.network.NetworkView;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.stage.Stage;
 
 /**
  * Created by han on 17-11-16.
@@ -10,7 +15,7 @@ import han.view.network.NetworkView;
 public class NeuronSnake {
 
     private static Network network = new Network(15, 1, 15, 2);
-    private static NetworkView nwView = new NetworkView();
+    private static Board board = new Board();
 
     /**
      * Main method run when program is started
@@ -18,11 +23,36 @@ public class NeuronSnake {
      */
     public static void main(String[] args) {
 
-        //TODO do stuff to init
+        JFXPanel panel = new JFXPanel();
 
+        NetworkView networkView = new NetworkView();
+        GameView gameView = new GameView();
 
-        Thread nwThread = new Thread(new NetworkView());
-        nwThread.start(); //(networkview starts the clock for ez reasons)
+        networkView.setGameView(gameView);
+        gameView.setNetworkView(networkView);
+
+        Platform.runLater(new Runnable() {
+            public void run() {
+                try {
+                    networkView.start(new Stage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        Platform.runLater(new Runnable() {
+            public void run() {
+                try {
+                    gameView.start(new Stage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        Thread clockThread = new Thread(new Clock(networkView, gameView));
+        clockThread.start();
 
 
         //TODO TESTING
@@ -38,7 +68,11 @@ public class NeuronSnake {
         NeuronSnake.network = network;
     }
 
-    public static NetworkView getNwView() {
-        return nwView;
+    public static Board getBoard() {
+        return board;
+    }
+
+    public static void setBoard(Board board) {
+        NeuronSnake.board = board;
     }
 }
