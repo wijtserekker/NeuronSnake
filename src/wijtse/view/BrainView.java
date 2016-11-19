@@ -1,17 +1,13 @@
 package wijtse.view;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import wijtse.model.brain.Axon;
 import wijtse.model.brain.Brain;
 import wijtse.model.brain.GeneticAlgorithm;
@@ -30,7 +26,6 @@ public class BrainView extends Application {
     private static int CANVAS_HEIGHT = 500;//768;
     private static int CANVAS_MIN_MARGIN = 20;
 
-    private static Brain brain;
     private static GeneticAlgorithm geneticAlgorithm;
     private static Object monitor = new Object();
     private static boolean running = true;
@@ -45,14 +40,10 @@ public class BrainView extends Application {
     private int xMargin;
     private ArrayList<Integer> yMargins;
 
-    public static void startBrainVisualization(Brain brain) {
-        BrainView.brain = brain;
-        ArrayList<Double> input = new ArrayList<Double>();
-        for (int i = 0; i < 15; i++) {
-            input.add(Math.random() > 0.7 ? 1.0 : 0.0);
-        }
-        brain.think(input);
-        launch();
+    private boolean firstGo = true;
+
+    public BrainView(Brain brain) {
+        setUpVariables(brain);
     }
 
     @Override
@@ -64,42 +55,23 @@ public class BrainView extends Application {
         //Setup canvas
         canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
         canvasGraphics = canvas.getGraphicsContext2D();
-
-        setUpVariables();
-        draw();
-
         canvasHolder.getChildren().add(canvas);
         root.getChildren().add(canvasHolder);
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
-
-        Thread dinkie = new Thread() {
-            @Override
-            public void run() {
-                while (running) {
-                    synchronized (monitor) {
-                        try {
-                            monitor.wait();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        draw();
-                    }
-                }
-            }
-        };
-        dinkie.start();
-
-        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            public void handle(WindowEvent we) {
-                BrainView.stopLoop();
-                System.out.println("Stage is closing");
-            }
-        });
-
     }
 
-    private void draw() {
+    public void draw(Brain brain) {
+        //TODO PLEASE REMOVE ===============
+        if (firstGo) {
+            firstGo = false;
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        //TODO PLEASE REMOVE ================
         canvasGraphics.setFill(Color.BLACK);
         canvasGraphics.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
@@ -150,7 +122,7 @@ public class BrainView extends Application {
         }
     }
 
-    private void setUpVariables() {
+    private void setUpVariables(Brain brain) {
         int layers = 2 + brain.getHiddenLayers().size();
         int maxNeuronsPerLayer = brain.getInputLayer().size() > brain.getOutputLayer().size() ? brain.getInputLayer().size() : brain.getOutputLayer().size();
         for (ArrayList<Neuron> hiddenLayer : brain.getHiddenLayers()) {
@@ -176,18 +148,5 @@ public class BrainView extends Application {
             yMargins.add((CANVAS_HEIGHT - neuronSize * hiddenLayer.size() - neuronSize * (hiddenLayer.size() - 1)) / 2);
         }
         yMargins.add((CANVAS_HEIGHT - neuronSize * brain.getOutputLayer().size() - neuronSize * (brain.getOutputLayer().size() - 1)) / 2);
-    }
-
-    public static void updateCanvas() {
-        synchronized (monitor) {
-            monitor.notify();
-        }
-    }
-
-    public static void stopLoop() {
-        running = false;
-        synchronized (monitor) {
-            monitor.notify();
-        }
     }
 }

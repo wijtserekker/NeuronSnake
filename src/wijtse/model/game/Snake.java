@@ -1,8 +1,11 @@
 package wijtse.model.game;
 
+import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.stage.Stage;
 import wijtse.model.brain.Brain;
 import wijtse.view.BoardView;
+import wijtse.view.BrainView;
 
 import java.util.ArrayList;
 
@@ -11,7 +14,7 @@ import java.util.ArrayList;
  */
 public class Snake {
 
-    public static final int VIEW_DISTANCE = 4;
+    public static final int VIEW_DISTANCE = 5;
     public static final int INIT_LENGTH = 3;
 
     private int age;
@@ -19,6 +22,7 @@ public class Snake {
     private Brain brain;
     private ArrayList<SnakeSegment> segments;
     private Board board;
+    private BrainView brainView;
 
     public Snake(Board board, int startX, int startY, ArrayList<Double> dna) {
         this.age = 0;
@@ -29,6 +33,19 @@ public class Snake {
             segments.add(new SnakeSegment(startX + i, startY, SnakeSegment.Direction.LEFT));
         }
         this.board = board;
+
+        System.out.println("hi");
+        //TODO LELIJK
+        brainView = new BrainView(brain);
+        Platform.runLater(new Runnable() {
+            public void run() {
+                try {
+                    brainView.start(new Stage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public void move() {
@@ -71,6 +88,7 @@ public class Snake {
         } else if (decision.get(1) > 0.5 && decision.get(0) < 0.5) {
             turnLeft();
         }
+        brainView.draw(brain); //TODO LELIJK
     }
 
     private void turnRight() {
@@ -120,7 +138,8 @@ public class Snake {
             double neuronValue = 0.0;
             for (int i = 1; i <= VIEW_DISTANCE; i++) {
                 if (board.isThereFoodAt(headX + i * viewLine.getXDistance(), headY + i * viewLine.getYDistance())) {
-                    neuronValue = (double)(4 - i) / (double)(VIEW_DISTANCE);
+                    neuronValue = (double)(VIEW_DISTANCE - i + 1) / (double)(VIEW_DISTANCE);
+                    break;
                 }
             }
             result.add(neuronValue);
@@ -130,7 +149,8 @@ public class Snake {
             for (int i = 1; i <= VIEW_DISTANCE; i++) {
                 for (SnakeSegment segment : segments) {
                     if (segment.getX() == headX + i * viewLine.getXDistance() && segment.getY() == headY + i * viewLine.getYDistance()) {
-                        neuronValue = (double)(4 - i) / (double)(VIEW_DISTANCE);
+                        neuronValue = (double)(VIEW_DISTANCE - i + 1) / (double)(VIEW_DISTANCE);
+                        break;
                     }
                 }
             }
@@ -141,11 +161,13 @@ public class Snake {
             for (int i = 1; i <= VIEW_DISTANCE; i++) {
                 if (headX + i * viewLine.getXDistance() < 0 || headX + i * viewLine.getXDistance() >= board.getWidth() ||
                         headY + i * viewLine.getYDistance() < 0 || headY + i * viewLine.getYDistance() >= board.getHeight()) {
-                    neuronValue = (double)(4 - i) / (double)(VIEW_DISTANCE);
+                    neuronValue = (double)(VIEW_DISTANCE - i + 1) / (double)(VIEW_DISTANCE);
+                    break;
                 }
             }
             result.add(neuronValue);
         }
+        System.out.println(result);
         return result;
     }
 
