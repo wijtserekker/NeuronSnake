@@ -1,15 +1,28 @@
 package han.model.game;
 
+import han.controller.game.NeuronSnake;
 import han.model.network.Network;
+import han.view.network.NetworkView;
+import wijtse.model.brain.Neuron;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static han.view.game.GameView.GRID_SIZE;
 
 /**
  * Created by han on 18-11-16.
  * collection of snake segments form a snake
  */
 public class Snake {
+
+    public List<Segment> getSegments() {
+        return segments;
+    }
+
+    public void setNetwork(Network network) {
+        this.network = network;
+    }
 
     public enum Direction{LEFT, RIGHT, UP, DOWN};
 
@@ -19,10 +32,14 @@ public class Snake {
     private int age;
     private Network network;
     private List<Segment> segments = new ArrayList<>();
+    private Board board;
 
-    public Snake() {
+    public Snake(Board board) {
+        this.board = board;
         for (int i = 0; i < SNAKE_START_LENGTH; i++) {
-            segments.add(new Segment());
+            Segment segment = new Segment();
+            segment.setLocation(new Location((Board.BOARD_SIZE_X / 2) - i, Board.BOARD_SIZE_Y / 2));
+            segments.add(segment);
         }
 
     }
@@ -43,12 +60,14 @@ public class Snake {
         for (Segment segment : segments) {
             int cx = segment.getLocation().getX();
             int cy = segment.getLocation().getY();
+            System.out.println(cx);
             switch (segment.getDirection()) {
                 case LEFT:
                     segment.getLocation().setX(cx - 1);
                     break;
                 case RIGHT:
                     segment.getLocation().setX(cx + 1);
+                    System.out.println(segment.getLocation().getX());
                     break;
                 case UP:
                     segment.getLocation().setY(cy - 1);
