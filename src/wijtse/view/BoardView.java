@@ -102,6 +102,7 @@ public class BoardView extends Application {
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent we) {
                 clock.pleaseStop();
+                clock.pauseOrResume();
             }
         });
     }

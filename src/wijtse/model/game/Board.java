@@ -1,6 +1,7 @@
 package wijtse.model.game;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import wijtse.model.brain.GeneticAlgorithm;
 import wijtse.view.BoardView;
 
@@ -14,7 +15,7 @@ public class Board {
     //Snake's brain structure:
     public static final int INPUT_NEURONS = 15;
     public static final int OUTPUT_NEURONS = 2;
-    public static final int HIDDEN_LAYERS = 1;
+    public static final int HIDDEN_LAYERS = 2;
     public static final int NEURONS_PER_HIDDEN_LAYER = 15;
     private static final int DNA_SIZE = INPUT_NEURONS * NEURONS_PER_HIDDEN_LAYER + OUTPUT_NEURONS * NEURONS_PER_HIDDEN_LAYER + (HIDDEN_LAYERS - 1) * NEURONS_PER_HIDDEN_LAYER * NEURONS_PER_HIDDEN_LAYER;
 
@@ -23,6 +24,8 @@ public class Board {
     private int maxPopulation;
     private int maxFood;
     private double foodSpawnRate;
+    private int snakesDied;
+    private int bestFitness;
 
     private GeneticAlgorithm geneticAlgorithm;
 
@@ -36,6 +39,8 @@ public class Board {
         this.maxPopulation = maxPopulation;
         this.maxFood = maxFood;
         this.foodSpawnRate = foodSpawnRate;
+        this.snakesDied = 0;
+        this.bestFitness = 0;
 
         geneticAlgorithm = new GeneticAlgorithm(DNA_SIZE);
 
@@ -64,6 +69,7 @@ public class Board {
         for (int i = population.size() - 1; i >= 0; i--) {
             if (!population.get(i).isAlive()) {
                 population.remove(i);
+                snakesDied++;
                 ArrayList<Snake> bestSnakes = getTwoBestSnakes();
                 population.add(new Snake(this, width / 4 * 3, height / 2, geneticAlgorithm.mutate(geneticAlgorithm.breed(bestSnakes.get(0).getDna(), bestSnakes.get(1).getDna()))));
             }
@@ -133,6 +139,16 @@ public class Board {
         for (ArrayList<Integer> foodLocation : foodLocations) {
             graphics.fillOval(foodLocation.get(0) * BoardView.BOARD_TILE_SIZE, foodLocation.get(1) * BoardView.BOARD_TILE_SIZE, BoardView.BOARD_TILE_SIZE, BoardView.BOARD_TILE_SIZE);
         }
+
+        int currentBestFitness = getTwoBestSnakes().get(0).getFitness();
+        if (currentBestFitness > bestFitness) {
+            bestFitness = currentBestFitness;
+        }
+        graphics.setFill(Color.WHITE);
+        graphics.fillText("Snakes died: " + snakesDied, 20, 30);
+        graphics.fillText("Best fitness: " + bestFitness, 20, 30 + graphics.getFont().getSize() + 4);
+        graphics.fillText("Best cur. fitness: " + currentBestFitness, 20, 30 + 2 * (graphics.getFont().getSize() + 4));
+        graphics.setFill(Color.BLACK);
     }
 
     public ArrayList<Snake> getTwoBestSnakes() {

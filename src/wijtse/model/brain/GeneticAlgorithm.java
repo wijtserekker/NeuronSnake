@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class GeneticAlgorithm {
 
-    private static final double MUTATION_RATE = 0.1;
+    private static final double MUTATION_RATE = 0.2;
 
     private int dnaSize;
 

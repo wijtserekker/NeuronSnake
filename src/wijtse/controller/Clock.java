@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public class Clock extends Thread{
 
-    public static final int TICKS_PER_SECOND = 5;
+    public static final int TICKS_PER_SECOND = 8;
 
     private int tickLength;
     private boolean running;

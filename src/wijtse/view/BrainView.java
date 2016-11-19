@@ -10,7 +10,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import wijtse.model.brain.Axon;
 import wijtse.model.brain.Brain;
-import wijtse.model.brain.GeneticAlgorithm;
 import wijtse.model.brain.Neuron;
 
 import java.util.ArrayList;
@@ -23,12 +22,8 @@ public class BrainView extends Application {
     private static final int MAX_NEURON_SIZE = 80;
     private static final int MAX_LAYER_GAP = 300;
     private static int CANVAS_WIDTH = 1024;
-    private static int CANVAS_HEIGHT = 500;//768;
+    private static int CANVAS_HEIGHT = 768;
     private static int CANVAS_MIN_MARGIN = 20;
-
-    private static GeneticAlgorithm geneticAlgorithm;
-    private static Object monitor = new Object();
-    private static boolean running = true;
 
     private Group root;
     private StackPane canvasHolder;
