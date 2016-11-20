@@ -28,9 +28,9 @@ public class BoardView extends Application {
     public static final Color FOOD_COLOR = Color.rgb(3, 119, 81);
     public static final Color BACKGROUND_COLOR = Color.BLACK;
 
-    private static final int BOARD_WIDTH = 30;
-    private static final int BOARD_HEIGHT = 30;
-    public static final int BOARD_TILE_SIZE = 20;
+    private static final int BOARD_WIDTH = 60;
+    private static final int BOARD_HEIGHT = 60;
+    public static final int BOARD_TILE_SIZE = 15;
 
     private Group root;
     private StackPane canvasHolder;
@@ -55,7 +55,7 @@ public class BoardView extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
-        Board board = new Board(BOARD_WIDTH, BOARD_HEIGHT, 7, 12, 0.3);
+        Board board = new Board(BOARD_WIDTH, BOARD_HEIGHT, 7, 40, 1);
         Clock clock = new Clock(board, canvasGraphics);
         clock.start();
 
@@ -95,6 +95,10 @@ public class BoardView extends Application {
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode().equals(KeyCode.SPACE)) {
                     clock.pauseOrResume();
+                } else if (keyEvent.getCode().equals(KeyCode.UP)) {
+                    clock.incSpeed();
+                } else if (keyEvent.getCode().equals(KeyCode.DOWN)) {
+                    clock.decSpeed();
                 }
             }
         });

@@ -17,6 +17,7 @@ public class Clock extends Thread{
     private boolean pause;
     private Board board;
     private GraphicsContext graphics;
+    private int speed;
 
     private Object pauseMonitor = new Object();
 
@@ -24,6 +25,7 @@ public class Clock extends Thread{
         tickLength = 1000 / TICKS_PER_SECOND;
         running = true;
         pause = false;
+        speed = 1;
 
         this.board = board;
         this.graphics = graphics;
@@ -49,7 +51,7 @@ public class Clock extends Thread{
 
     private void waitForNextTick(long startTime) {
         long timePassed = new Date().getTime() - startTime;
-        long timeToWait = tickLength - timePassed;
+        long timeToWait = tickLength / speed - timePassed;
         if (timeToWait > 0) {
             try {
                 Thread.sleep(timeToWait);
@@ -79,6 +81,17 @@ public class Clock extends Thread{
             }
         } else {
             pause = true;
+        }
+    }
+
+    public void incSpeed() {
+        speed++;
+    }
+
+    public void decSpeed() {
+        speed--;
+        if (speed <= 0) {
+            speed = 1;
         }
     }
 
