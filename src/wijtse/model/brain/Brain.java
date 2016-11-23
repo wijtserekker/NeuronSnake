@@ -11,22 +11,22 @@ public class Brain {
     private ArrayList<Neuron> outputLayer;
     private ArrayList<ArrayList<Neuron>> hiddenLayers;
 
-    public Brain(int inputNeurons, int outputNeurons, int nrOfHiddenLayers, int neuronsPerHiddenLayer, ArrayList<Double> dna) {
+    public Brain(BrainDimensions dimensions, ArrayList<Double> dna) {
         //Create layers
         inputLayer = new ArrayList<>();
-        for (int i = 0; i < inputNeurons; i++) {
+        for (int i = 0; i < dimensions.getNrOfInputNeurons(); i++) {
             inputLayer.add(new Neuron());
         }
 
         outputLayer = new ArrayList<>();
-        for (int i = 0; i < outputNeurons; i++) {
+        for (int i = 0; i < dimensions.getNrOfOutputNeurons(); i++) {
             outputLayer.add(new Neuron());
         }
 
         hiddenLayers = new ArrayList<>();
-        for (int i = 0; i < nrOfHiddenLayers; i++) {
+        for (int i = 0; i < dimensions.getNrOfHiddenLayers(); i++) {
             hiddenLayers.add(new ArrayList<>());
-            for (int j = 0; j < neuronsPerHiddenLayer; j++) {
+            for (int j = 0; j < dimensions.getNeuronsPerHiddenLayer(); j++) {
                 hiddenLayers.get(i).add(new Neuron());
             }
         }
@@ -40,7 +40,7 @@ public class Brain {
             }
         }
 
-        for (int i = 0; i < nrOfHiddenLayers - 1; i++) {
+        for (int i = 0; i < dimensions.getNrOfHiddenLayers() - 1; i++) {
             for (Neuron srcNeuron : hiddenLayers.get(i)) {
                 for (Neuron destNeuron : hiddenLayers.get(i + 1)) {
                     srcNeuron.addAxon(new Axon(dna.get(dnaAllele), destNeuron));
@@ -49,7 +49,7 @@ public class Brain {
             }
         }
 
-        for (Neuron hiddenNeuron : hiddenLayers.get(nrOfHiddenLayers - 1)) {
+        for (Neuron hiddenNeuron : hiddenLayers.get(dimensions.getNrOfHiddenLayers() - 1)) {
             for (Neuron outputNeuron : outputLayer) {
                 hiddenNeuron.addAxon(new Axon(dna.get(dnaAllele), outputNeuron));
                 dnaAllele++;
@@ -122,23 +122,11 @@ public class Brain {
         return inputLayer;
     }
 
-    public void setInputLayer(ArrayList<Neuron> inputLayer) {
-        this.inputLayer = inputLayer;
-    }
-
     public ArrayList<Neuron> getOutputLayer() {
         return outputLayer;
     }
 
-    public void setOutputLayer(ArrayList<Neuron> outputLayer) {
-        this.outputLayer = outputLayer;
-    }
-
     public ArrayList<ArrayList<Neuron>> getHiddenLayers() {
         return hiddenLayers;
-    }
-
-    public void setHiddenLayers(ArrayList<ArrayList<Neuron>> hiddenLayers) {
-        this.hiddenLayers = hiddenLayers;
     }
 }

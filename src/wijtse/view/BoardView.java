@@ -1,6 +1,5 @@
 package wijtse.view;
 
-import han.model.network.Network;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -16,6 +15,10 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import wijtse.controller.Clock;
 import wijtse.model.game.Board;
+import wijtse.model.game.Snake;
+import wijtse.model.game.SnakeSegment;
+
+import java.util.ArrayList;
 
 /**
  * Created by wijtse on 18-11-16.
@@ -28,17 +31,20 @@ public class BoardView extends Application {
     public static final Color FOOD_COLOR = Color.rgb(3, 119, 81);
     public static final Color BACKGROUND_COLOR = Color.BLACK;
 
-    private static final int BOARD_WIDTH = 60;
-    private static final int BOARD_HEIGHT = 60;
-    public static final int BOARD_TILE_SIZE = 15;
-
     private Group root;
     private StackPane canvasHolder;
     private Canvas canvas;
     private GraphicsContext canvasGraphics;
+    private Board board;
+    private int tileSize;
+    private Clock clock;
+    private int bestFitness;
 
-    public static void main(String[] args) {
-        launch(args);
+    public BoardView(Board board, int tileSize, Clock clock) {
+        this.board = board;
+        this.tileSize = tileSize;
+        this.clock = clock;
+        this.bestFitness = 0;
     }
 
     @Override
@@ -47,18 +53,13 @@ public class BoardView extends Application {
         root = new Group();
         canvasHolder = new StackPane();
         //Setup canvas
-        canvas = new Canvas(BOARD_WIDTH * BOARD_TILE_SIZE, BOARD_HEIGHT * BOARD_TILE_SIZE);
+        canvas = new Canvas(board.getWidth() * tileSize, board.getHeight() * tileSize);
         canvasGraphics = canvas.getGraphicsContext2D();
 
         canvasHolder.getChildren().add(canvas);
         root.getChildren().add(canvasHolder);
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
-
-        Board board = new Board(BOARD_WIDTH, BOARD_HEIGHT, 7, 40, 1);
-        Clock clock = new Clock(board, canvasGraphics);
-        clock.start();
-
 
         canvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -70,10 +71,10 @@ public class BoardView extends Application {
                     int x = -1;
                     int y = -1;
 
-                    for (int testX = 0; testX < BOARD_WIDTH; testX++) {
-                        if (mouseX > testX * BOARD_TILE_SIZE && mouseX < testX * BOARD_TILE_SIZE + BOARD_TILE_SIZE) {
-                            for (int testY = 0; testY < BOARD_HEIGHT; testY++) {
-                                if (mouseY > testY * BOARD_TILE_SIZE && mouseY < testY * BOARD_TILE_SIZE + BOARD_TILE_SIZE) {
+                    for (int testX = 0; testX < board.getWidth(); testX++) {
+                        if (mouseX > testX * tileSize && mouseX < testX * tileSize + tileSize) {
+                            for (int testY = 0; testY < board.getHeight(); testY++) {
+                                if (mouseY > testY * tileSize && mouseY < testY * tileSize + tileSize) {
                                     x = testX;
                                     y = testY;
                                     break;
@@ -111,4 +112,42 @@ public class BoardView extends Application {
         });
     }
 
+    public void draw(Board board) {
+        //Draw background
+        canvasGraphics.setFill(BoardView.BACKGROUND_COLOR);
+        canvasGraphics.fillRect(0, 0, board.getWidth() * tileSize, board.getHeight() * tileSize);
+
+        //Draw snakes
+        for (Snake snake : board.getPopulation()) {
+            //Draw head segment
+            canvasGraphics.setFill(BoardView.SNAKE_HEAD_COLOR);
+            SnakeSegment segment = snake.getSegments().get(0);
+            canvasGraphics.fillRect(tileSize * segment.getX(), tileSize * segment.getY(), tileSize, tileSize);
+
+            //Draw tail segments
+            canvasGraphics.setFill(BoardView.SNAKE_COLOR);
+            for (int i = 1; i < snake.getSegments().size(); i++) {
+                segment = snake.getSegments().get(i);
+                canvasGraphics.fillRect(tileSize * segment.getX(), tileSize * segment.getY(), tileSize, tileSize);
+            }
+        }
+
+        //Draw food
+        canvasGraphics.setFill(BoardView.FOOD_COLOR);
+        for (ArrayList<Integer> foodLocation : board.getFoodLocations()) {
+            canvasGraphics.fillRect(foodLocation.get(0) * tileSize, foodLocation.get(1) * tileSize, tileSize, tileSize);
+        }
+
+        //Draw info
+        int currentBestFitness = board.getTwoBestSnakes().get(0).getFitness();
+        if (currentBestFitness > bestFitness) {
+            bestFitness = currentBestFitness;
+        }
+        canvasGraphics.setFill(Color.WHITE);
+        canvasGraphics.fillText("Snakes died: " + board.getSnakesDied(), 20, 30);
+//        graphics.fillText("Generation: " + generation, 20, 30);
+        canvasGraphics.fillText("Best fitness: " + bestFitness, 20, 30 + canvasGraphics.getFont().getSize() + 4);
+        canvasGraphics.fillText("Best cur. fitness: " + currentBestFitness, 20, 30 + 2 * (canvasGraphics.getFont().getSize() + 4));
+        canvasGraphics.setFill(Color.BLACK);
+    }
 }

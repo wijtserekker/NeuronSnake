@@ -12,13 +12,6 @@ import java.util.ArrayList;
  */
 public class Board {
 
-    //Snake's brain structure:
-    public static final int INPUT_NEURONS = 15;
-    public static final int OUTPUT_NEURONS = 2;
-    public static final int HIDDEN_LAYERS = 1;
-    public static final int NEURONS_PER_HIDDEN_LAYER = 15;
-    private static final int DNA_SIZE = INPUT_NEURONS * NEURONS_PER_HIDDEN_LAYER + OUTPUT_NEURONS * NEURONS_PER_HIDDEN_LAYER + (HIDDEN_LAYERS - 1) * NEURONS_PER_HIDDEN_LAYER * NEURONS_PER_HIDDEN_LAYER;
-
     private int width;
     private int height;
     private int maxPopulation;
@@ -33,7 +26,7 @@ public class Board {
     private ArrayList<ArrayList<Integer>> foodLocations;
     private ArrayList<Snake> population;
 
-    public Board(int width, int height, int maxPopulation, int maxFood, double foodSpawnRate) {
+    public Board(int width, int height, int maxPopulation, int maxFood, double foodSpawnRate, GeneticAlgorithm geneticAlgorithm) {
 
         this.width = width;
         this.height = height;
@@ -44,7 +37,7 @@ public class Board {
         this.bestFitness = 0;
         this.generation = 0;
 
-        geneticAlgorithm = new GeneticAlgorithm(DNA_SIZE);
+        this.geneticAlgorithm = geneticAlgorithm;
 
         foodLocations = new ArrayList<>();
         population = new ArrayList<>();
@@ -139,42 +132,6 @@ public class Board {
         return result;
     }
 
-    public void draw(GraphicsContext graphics) {
-        //Draw background
-        graphics.setFill(BoardView.BACKGROUND_COLOR);
-        graphics.fillRect(0, 0, width * BoardView.BOARD_TILE_SIZE, height * BoardView.BOARD_TILE_SIZE);
-
-//        graphics.setStroke(Color.GRAY); //Draw background grid
-//        for (int i = 1; i < width; i++) {
-//            graphics.strokeLine(i*BoardView.BOARD_TILE_SIZE, 0, i*BoardView.BOARD_TILE_SIZE, height*BoardView.BOARD_TILE_SIZE);
-//        }
-//        for (int i = 1; i < height; i++) {
-//            graphics.strokeLine(0, i*BoardView.BOARD_TILE_SIZE, width*BoardView.BOARD_TILE_SIZE, i*BoardView.BOARD_TILE_SIZE);
-//        }
-
-        //Draw snakes
-        for (Snake snake : population) {
-            snake.draw(graphics);
-        }
-
-        //Draw food
-        graphics.setFill(BoardView.FOOD_COLOR);
-        for (ArrayList<Integer> foodLocation : foodLocations) {
-            graphics.fillOval(foodLocation.get(0) * BoardView.BOARD_TILE_SIZE, foodLocation.get(1) * BoardView.BOARD_TILE_SIZE, BoardView.BOARD_TILE_SIZE, BoardView.BOARD_TILE_SIZE);
-        }
-
-        int currentBestFitness = getTwoBestSnakes().get(0).getFitness();
-        if (currentBestFitness > bestFitness) {
-            bestFitness = currentBestFitness;
-        }
-        graphics.setFill(Color.WHITE);
-        graphics.fillText("Snakes died: " + snakesDied, 20, 30);
-//        graphics.fillText("Generation: " + generation, 20, 30);
-        graphics.fillText("Best fitness: " + bestFitness, 20, 30 + graphics.getFont().getSize() + 4);
-        graphics.fillText("Best cur. fitness: " + currentBestFitness, 20, 30 + 2 * (graphics.getFont().getSize() + 4));
-        graphics.setFill(Color.BLACK);
-    }
-
     public ArrayList<Snake> getTwoBestSnakes() {
         ArrayList<Snake> result = new ArrayList<>();
 
@@ -210,5 +167,17 @@ public class Board {
             }
         }
 
+    }
+
+    public ArrayList<Snake> getPopulation() {
+        return population;
+    }
+
+    public ArrayList<ArrayList<Integer>> getFoodLocations() {
+        return foodLocations;
+    }
+
+    public int getSnakesDied() {
+        return snakesDied;
     }
 }

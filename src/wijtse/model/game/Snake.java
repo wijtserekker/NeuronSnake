@@ -3,6 +3,7 @@ package wijtse.model.game;
 import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
+import wijtse.controller.NeuronSnake;
 import wijtse.model.brain.Brain;
 import wijtse.view.BoardView;
 import wijtse.view.BrainView;
@@ -48,7 +49,7 @@ public class Snake {
         this.age = 0;
         this.health = MAX_HEALTH;
         this.dna = dna;
-        this.brain = new Brain(Board.INPUT_NEURONS, Board.OUTPUT_NEURONS, Board.HIDDEN_LAYERS, Board.NEURONS_PER_HIDDEN_LAYER, dna);
+        this.brain = new Brain(NeuronSnake.BRAIN_DIMENSIONS, dna);
         this.segments = new ArrayList<>();
         for (int i = 0; i < INIT_LENGTH; i++) {
             segments.add(new SnakeSegment(startX + i, startY, SnakeSegment.Direction.LEFT));
@@ -239,12 +240,7 @@ public class Snake {
         return dna;
     }
 
-    public void draw(GraphicsContext graphics) {
-        graphics.setFill(BoardView.SNAKE_HEAD_COLOR);
-        segments.get(0).draw(graphics);
-        graphics.setFill(BoardView.SNAKE_COLOR);
-        for (int i = 1; i < segments.size(); i++) {
-            segments.get(i).draw(graphics);
-        }
+    public ArrayList<SnakeSegment> getSegments() {
+        return segments;
     }
 }

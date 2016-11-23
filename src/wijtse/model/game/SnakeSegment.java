@@ -39,10 +39,6 @@ public class SnakeSegment {
         }
     }
 
-    public void draw(GraphicsContext graphics) {
-        graphics.fillRect(BoardView.BOARD_TILE_SIZE * x, BoardView.BOARD_TILE_SIZE * y, BoardView.BOARD_TILE_SIZE, BoardView.BOARD_TILE_SIZE);
-    }
-
     public void setDirection(Direction direction) {
         this.direction = direction;
     }

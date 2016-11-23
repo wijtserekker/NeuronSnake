@@ -2,6 +2,7 @@ package wijtse.controller;
 
 import javafx.scene.canvas.GraphicsContext;
 import wijtse.model.game.Board;
+import wijtse.view.BoardView;
 
 import java.util.Date;
 
@@ -16,19 +17,18 @@ public class Clock extends Thread{
     private boolean running;
     private boolean pause;
     private Board board;
-    private GraphicsContext graphics;
+    private BoardView view;
     private int speed;
 
     private Object pauseMonitor = new Object();
 
-    public Clock(Board board, GraphicsContext graphics) {
+    public Clock(Board board) {
         tickLength = 1000 / TICKS_PER_SECOND;
         running = true;
         pause = false;
         speed = 1;
 
         this.board = board;
-        this.graphics = graphics;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class Clock extends Thread{
 
     private void tick() {
         board.update();
-        board.draw(graphics);
+        view.draw(board);
     }
 
     private void waitForNextTick(long startTime) {
@@ -101,5 +101,9 @@ public class Clock extends Thread{
 
     public void openBrainViewOfSnake(int x, int y) {
         board.openBrainViewOfSnake(x, y);
+    }
+
+    public void setView(BoardView view) {
+        this.view = view;
     }
 }
