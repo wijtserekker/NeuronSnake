@@ -1,11 +1,9 @@
 package wijtse.model.game;
 
 import javafx.application.Platform;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
 import wijtse.controller.NeuronSnake;
 import wijtse.model.brain.Brain;
-import wijtse.view.BoardView;
 import wijtse.view.BrainView;
 
 import java.util.ArrayList;

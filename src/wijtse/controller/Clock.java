@@ -1,5 +1,6 @@
 package wijtse.controller;
 
+import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
 import wijtse.model.game.Board;
 import wijtse.view.BoardView;
@@ -46,7 +47,12 @@ public class Clock extends Thread{
 
     private void tick() {
         board.update();
-        view.draw(board);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                view.draw(board);
+            }
+        });
     }
 
     private void waitForNextTick(long startTime) {

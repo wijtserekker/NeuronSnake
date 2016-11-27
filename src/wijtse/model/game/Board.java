@@ -14,12 +14,9 @@ public class Board {
 
     private int width;
     private int height;
-    private int maxPopulation;
     private int maxFood;
     private double foodSpawnRate;
     private int snakesDied;
-    private int bestFitness;
-    private int generation;
 
     private GeneticAlgorithm geneticAlgorithm;
 
@@ -30,12 +27,9 @@ public class Board {
 
         this.width = width;
         this.height = height;
-        this.maxPopulation = maxPopulation;
         this.maxFood = maxFood;
         this.foodSpawnRate = foodSpawnRate;
         this.snakesDied = 0;
-        this.bestFitness = 0;
-        this.generation = 0;
 
         this.geneticAlgorithm = geneticAlgorithm;
 
