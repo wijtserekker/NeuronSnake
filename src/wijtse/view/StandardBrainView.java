@@ -8,16 +8,16 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import wijtse.model.brain.Axon;
-import wijtse.model.brain.Brain;
-import wijtse.model.brain.Neuron;
+import wijtse.model.brain.standard.Axon;
+import wijtse.model.brain.standard.Brain;
+import wijtse.model.brain.standard.Neuron;
 
 import java.util.ArrayList;
 
 /**
  * Created by wijtse on 17-11-16.
  */
-public class BrainView extends Application {
+public class StandardBrainView extends Application {
 
     private static final int MAX_NEURON_SIZE = 80;
     private static final int MAX_LAYER_GAP = 300;
@@ -37,7 +37,7 @@ public class BrainView extends Application {
 
     private boolean firstGo = true;
 
-    public BrainView(Brain brain) {
+    public StandardBrainView(Brain brain) {
         setUpVariables(brain);
     }
 

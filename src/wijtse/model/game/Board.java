@@ -1,9 +1,6 @@
 package wijtse.model.game;
 
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import wijtse.model.brain.GeneticAlgorithm;
-import wijtse.view.BoardView;
+import wijtse.model.brain.standard.GeneticAlgorithm;
 
 import java.util.ArrayList;
 

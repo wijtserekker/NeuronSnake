@@ -3,8 +3,8 @@ package wijtse.controller;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.stage.Stage;
-import wijtse.model.brain.BrainDimensions;
-import wijtse.model.brain.GeneticAlgorithm;
+import wijtse.model.brain.standard.BrainDimensions;
+import wijtse.model.brain.standard.GeneticAlgorithm;
 import wijtse.model.game.Board;
 import wijtse.view.BoardView;
 

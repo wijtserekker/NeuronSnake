@@ -1,19 +1,14 @@
 package han.model.game;
 
-import han.controller.game.NeuronSnake;
-import han.model.network.Edge;
 import han.model.network.Network;
 import han.model.network.Node;
-import han.view.network.NetworkView;
 import javafx.scene.paint.Color;
-import wijtse.model.brain.Neuron;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static han.model.game.Board.BOARD_SIZE_X;
 import static han.model.game.Board.BOARD_SIZE_Y;
-import static han.view.game.GameView.GRID_SIZE;
 
 /**
  * Created by han on 18-11-16.

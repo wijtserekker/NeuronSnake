@@ -3,8 +3,8 @@ package wijtse.model.game;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import wijtse.controller.NeuronSnake;
-import wijtse.model.brain.Brain;
-import wijtse.view.BrainView;
+import wijtse.model.brain.standard.Brain;
+import wijtse.view.StandardBrainView;
 
 import java.util.ArrayList;
 
@@ -40,7 +40,7 @@ public class Snake {
     private Brain brain;
     private ArrayList<SnakeSegment> segments;
     private Board board;
-    private BrainView brainView;
+    private StandardBrainView brainView;
 
     public Snake(Board board, int startX, int startY, ArrayList<Double> dna) {
         this.alive = true;
@@ -213,7 +213,7 @@ public class Snake {
 
     public void openBrainView() {
         System.out.println("Selected Snake's DNA: " + dna);
-        brainView = new BrainView(brain);
+        brainView = new StandardBrainView(brain);
         Platform.runLater(new Runnable() {
             public void run() {
                 try {
