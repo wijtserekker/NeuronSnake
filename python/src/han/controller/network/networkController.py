@@ -1,17 +1,29 @@
 import random
 
-from han.model.network.networkModel import *
-# from han.view.network.networkViewTkinter import *
-from han.view.network.networkViewPyQt import *
+import sys
+
+import math
+from PyQt5 import QtWidgets
+
+from han.model.network.networkModel import Network, Node, Edge
 
 
 # Value propagation functions.
-def calculate_value_basic(node: 'Node'):
+from han.view.network.networkViewPyQt import NetworkView
+
+
+def calculate_value_basic(node: 'Node', coeff: 'int'=1):
     """Function that calculates what the total input value of this node is, and set the node value to this."""
     # The basic input to a node is the sum of the values of its predecessors multiplied by the weight of each edge.
-    node.value = 0
+    value = 0
     for edge in node.input_edges:
-        node.value += edge.source_node.value * edge.weight
+        value += edge.source_node.value * edge.weight
+    value = activation_function(value, coeff)
+    node.value = value
+
+
+def activation_function(value: 'float', coeff: 'int'):
+    return 1/(1 + math.exp(-1 * value / coeff))
 
 
 # Weight assignment functions.
@@ -45,32 +57,37 @@ class NetworkController:
         """Initialization function for the NetworkController class."""
 
         # Initialize the attributes.
-        self.network = Network(INPUT_NODES, HIDDEN_NODE_GROUPS, HIDDEN_NODES, OUTPUT_NODES, WEIGHT_FUNCTION_RANDOM)
+        self.networks = [Network(INPUT_NODES, HIDDEN_NODE_GROUPS, HIDDEN_NODES, OUTPUT_NODES, WEIGHT_FUNCTION_RANDOM)]
+        self.active_network = self.networks[0]
 
-        # self.network_view = NetworkView(W_WIDTH, W_HEIGHT)
-        # self.network_view.init_network(self.network.input_nodes, self.network.hidden_node_groups,
-        #                                self.network.output_nodes, self.network.edges, NODE_SIZE, EDGE_SIZE)
-
-        self.network_view = NetworkView(self.network)
+        self.app = QtWidgets.QApplication(sys.argv)
+        self.network_view = NetworkView(W_WIDTH, W_HEIGHT,
+                                        self.active_network.input_nodes,
+                                        self.active_network.hidden_node_groups,
+                                        self.active_network.output_nodes,
+                                        self.active_network.edges,
+                                        NODE_SIZE, EDGE_SIZE)
+        sys.exit(self.app.exec_())
 
     def update_network(self):
         """Function that updates the network model and view."""
 
-        # =========== Update model.
+        # =========== Update model. =========== #
 
         # Update input nodes.
         # TODO input node update, depending on "game"
 
         # Update hidden nodes.
-        for i in range(0, len(self.network.hidden_node_groups)):
-            for hidden_node in self.network.hidden_node_groups[i]:
+        for i in range(0, len(self.active_network.hidden_node_groups)):
+            for hidden_node in self.active_network.hidden_node_groups[i]:
                 VALUE_FUNCTION_BASIC(hidden_node)
 
         # Update output nodes
-        for output_node in self.network.output_nodes:
+        for output_node in self.active_network.output_nodes:
                 VALUE_FUNCTION_BASIC(output_node)
 
-        # =========== Update view.
+        # =========== Update view. =========== #
 
-        self.network_view.update_network()
+        self.network_view.update()
+
 
